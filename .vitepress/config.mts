@@ -2,14 +2,15 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-18 14:21:09
- * @FilePath: \zero-simple-admin\.vitepress\config.mts
+ * @LastEditTime: 2024-08-19 21:23:18
+ * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
 import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: "/zero-simple-docs/",
   title: "Zero-Simple Docs",
   description: "一个练习一年半的前端练习生",
   themeConfig: {
