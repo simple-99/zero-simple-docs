@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-20 17:19:21
+ * @LastEditTime: 2024-08-20 18:31:31
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -38,7 +38,7 @@ export default withPwa(
     //   root: {
     //     label: '简体中文',
     //     lang: 'zh-CN',
-    srcDir: "src",
+    srcDir: "pages",
     themeConfig: {
       darkModeSwitchLabel: "主题",
       darkModeSwitchTitle: "切换到深色模式",

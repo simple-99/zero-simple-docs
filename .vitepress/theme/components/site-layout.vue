@@ -2,7 +2,7 @@
  * @version: 1.0provide, 
  * @Author: wsh
  * @Date: 2024-08-20 14:14:04
- * @LastEditTime: 2024-08-20 17:13:03
+ * @LastEditTime: 2024-08-20 18:02:12
  * @FilePath: \zero-simple-docs\.vitepress\theme\components\site-layout.vue
  * @Description: 
 -->
@@ -17,7 +17,7 @@ import {
 } from "@nolebase/vitepress-plugin-enhanced-readabilities/client";
 import "@nolebase/vitepress-plugin-enhanced-readabilities/client/style.css";
 import { NolebaseHighlightTargetedHeading } from "@nolebase/vitepress-plugin-highlight-targeted-heading/client";
-import "@nolebase/vitepress-plugin-highlight-targeted-heading/client/style.css";
+import '@nolebase/vitepress-plugin-enhanced-readabilities/client/style.css'
 
 const { Layout } = DefaultTheme;
 const route = useRoute();

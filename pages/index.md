@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "Zero-Simple-Docs"
+  name: "Zero Simple Docs"
   text: "遇事不决，可问春风  春风不语，即随本心"
   tagline: 不破不立 大破大立
   image:
