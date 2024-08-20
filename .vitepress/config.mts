@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-20 16:12:20
+ * @LastEditTime: 2024-08-20 17:19:21
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -23,6 +23,7 @@ import { version } from "../package.json";
 // https://vitepress.dev/reference/site-config
 export default withPwa(
   defineConfigWithTheme({
+    base: "/zero-simple-docs/",
     title: "Zero Simple Docs",
     description: "遇事不决，可问春风。春风不语，即随本心",
     head: head(),
@@ -141,6 +142,14 @@ export default withPwa(
       config: (md) => {
         md.use(BiDirectionalLinks());
       },
+      theme: {
+        light: "github-light",
+        dark: "vitesse-dark",
+      },
+      image: {
+        lazyLoading: true,
+      },
+      lineNumbers: true,
     },
   })
 );
