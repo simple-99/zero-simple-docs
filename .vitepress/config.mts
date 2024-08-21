@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-21 11:08:18
+ * @LastEditTime: 2024-08-21 16:29:46
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -65,7 +65,7 @@ export default withPwa(
         text: "最后更新于",
       },
       lightModeSwitchTitle: "切换到浅色模式",
-      logo: "https://unpkg.com/@vbenjs/static-source@0.1.6/source/logo-v1.webp",
+      logo: "/logos/zero-logo.svg",
       nav: nav(),
       outline: "deep",
       outlineTitle: "页面导航",
@@ -157,8 +157,7 @@ export default withPwa(
 
 function head(): HeadConfig[] {
   return [
-    // ["link", { rel: "icon", type: "image/svg+xml", href: "/logos/vite.svg" }],
-    ["link", { href: "/zero-simple-docs/logos/vite.svg", rel: "icon" }],
+    ["link", { href: "/zero-simple-docs/logos/zero-logo1.svg", rel: "icon" }],
   ];
 }
 
@@ -170,13 +169,13 @@ function pwa(): PwaOptions {
       icons: [
         {
           sizes: "192x192",
-          src: "https://unpkg.com/@vbenjs/static-source@0.1.6/source/pwa-icon-192.png",
-          type: "image/png",
+          src: "/zero-simple-docs/logos/zero-logo1.svg",
+          type: "image/svg+xml",
         },
         {
           sizes: "512x512",
-          src: "https://unpkg.com/@vbenjs/static-source@0.1.6/source/pwa-icon-512.png",
-          type: "image/png",
+          src: "/zero-simple-docs/logos/zero-logo1.svg",
+          type: "image/svg+xml",
         },
       ],
       id: "/",

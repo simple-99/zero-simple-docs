@@ -7,7 +7,7 @@ hero:
   text: "遇事不决，可问春风  春风不语，即随本心"
   tagline: 不破不立 大破大立
   image:
-    src: https://unpkg.com/@vbenjs/static-source@0.1.6/source/logo-v1.webp
+    src: /logos/zero-logo.svg
     alt: Zero Simple
   actions:
     - theme: brand
@@ -18,21 +18,23 @@ hero:
       link: https://github.com/simple-99/zero-simple-docs
 
 features:
-  - icon: 🚀
-    title: 最新技术栈
-    details: 基于 Vue3、Pinia、Vue Router、TypeScript、等最新技术栈。
-    link: /guide/introduction/quick-start
-    linkText: 快速开始
+  - icon:
+      src: https://merakiui.com/images/logo.svg
+    title: Meraki UI
+    details: Meraki UI 是响应式 Tailwind CSS 组件的集合，通过支持 RTL 语言和时尚的深色模式来增强您网站的用户体验
+    link: https://merakiui.com/
+    linkText: 现代可定制的 Tailwind CSS UI 组件
   - icon: 🦄
     title: Nólëbase 集成
     details: 为基于本地优先的知识库和静态生成器的文档工程提供更好的体验
     link: https://nolebase-integrations.ayaka.io/pages/zh-CN/
     linkText: 多元化的文档工程工具合集
-  - icon: 🎨
-    title: 主题定制
-    details: 通过简单的配置，即可实现各种主题切换，满足个性化需求。
-    link: /guide/in-depth/theme
-    linkText: 主题文档
+  - icon:
+      src: https://3dicons.co/favicon-32x32.png?v=12288f6c71cf1a278192e2017538975d
+    title: 3D Icon
+    details: 制作精美的开源 3D 图标
+    link: https://3dicons.co/?ref=dailydev
+    linkText: 获取3D Icon
   - icon: 🌐
     title: 国际化
     details: 内置国际化方案，支持多语言切换，满足国际化需求。
