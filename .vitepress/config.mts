@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-21 10:46:38
+ * @LastEditTime: 2024-08-21 11:08:18
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -166,8 +166,7 @@ function pwa(): PwaOptions {
   return {
     includeManifestIcons: false,
     manifest: {
-      description:
-        "Vben Admin is a modern admin dashboard template based on Vue 3. ",
+      description: "遇事不决，可问春风。春风不语，即随本心",
       icons: [
         {
           sizes: "192x192",
@@ -181,8 +180,8 @@ function pwa(): PwaOptions {
         },
       ],
       id: "/",
-      name: "Vben Admin Doc",
-      short_name: "vben_admin_doc",
+      name: "Zero Simple Docs",
+      short_name: "Zero Simple Docs",
       theme_color: "#ffffff",
     },
     outDir: resolve(process.cwd(), ".vitepress/dist"),
