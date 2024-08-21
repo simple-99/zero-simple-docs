@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-20 18:31:31
+ * @LastEditTime: 2024-08-21 10:46:38
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -47,7 +47,8 @@ export default withPwa(
         prev: "上一页",
       },
       editLink: {
-        pattern: "https://github.com/simple-99/zero-simple-docs/:path",
+        pattern:
+          "https://github.com/simple-99/zero-simple-docs/blob/main/pages/:path",
         text: "在 GitHub 上编辑此页面",
       },
       footer: {
@@ -155,7 +156,10 @@ export default withPwa(
 );
 
 function head(): HeadConfig[] {
-  return [["link", { href: "/favicon.ico", rel: "icon" }]];
+  return [
+    // ["link", { rel: "icon", type: "image/svg+xml", href: "/logos/vite.svg" }],
+    ["link", { href: "/zero-simple-docs/logos/vite.svg", rel: "icon" }],
+  ];
 }
 
 function pwa(): PwaOptions {
