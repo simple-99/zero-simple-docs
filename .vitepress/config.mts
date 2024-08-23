@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-21 16:29:46
+ * @LastEditTime: 2024-08-23 15:34:45
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -19,6 +19,7 @@ import {
 } from "@nolebase/vitepress-plugin-git-changelog/vite";
 import { BiDirectionalLinks } from "@nolebase/markdown-it-bi-directional-links";
 import { version } from "../package.json";
+import sidebar from "../pages/helper/sidebar";
 
 // https://vitepress.dev/reference/site-config
 export default withPwa(
@@ -94,8 +95,12 @@ export default withPwa(
         provider: "local",
       },
       sidebar: {
-        "/commercial/": { base: "/commercial/", items: sidebarCommercial() },
-        "/guide/": { base: "/guide/", items: sidebarGuide() },
+        "/commercial/": {
+          base: "/commercial/",
+          items: sidebar.sidebarCommercial(),
+        },
+        "/guide/": { base: "/guide/", items: sidebar.sidebarGuide() },
+        "/tutorial/": { base: "/tutorial/", items: sidebar.sidebarTutorial() },
       },
       sidebarMenuLabel: "菜单",
       siteTitle: "Zero Simple Docs",
@@ -235,91 +240,11 @@ function nav(): DefaultTheme.NavItem[] {
           link: "/tutorial/vitepress",
           text: "vitepress搭建并部署网站",
         },
-      ],
-    },
-  ];
-}
-
-function sidebarGuide(): DefaultTheme.SidebarItem[] {
-  return [
-    {
-      collapsed: false,
-      text: "简介",
-      items: [
         {
-          link: "introduction/vben",
-          text: "关于 Vben Admin",
+          link: "/tutorial/airport",
+          text: "机场服务",
         },
-        {
-          link: "introduction/why",
-          text: "为什么选择我们?",
-        },
-        { link: "introduction/quick-start", text: "快速开始" },
-        { link: "introduction/thin", text: "精简版本" },
       ],
-    },
-    {
-      text: "基础",
-      items: [
-        { link: "essentials/concept", text: "基础概念" },
-        { link: "essentials/development", text: "本地开发" },
-        { link: "essentials/route", text: "路由和菜单" },
-        { link: "essentials/settings", text: "配置" },
-        { link: "essentials/icons", text: "图标" },
-        { link: "essentials/styles", text: "样式" },
-        { link: "essentials/external-module", text: "外部模块" },
-        { link: "essentials/build", text: "构建与部署" },
-        { link: "essentials/server", text: "服务端交互与数据Mock" },
-      ],
-    },
-    {
-      text: "深入",
-      items: [
-        // { link: 'in-depth/layout', text: '布局' },
-        { link: "in-depth/theme", text: "主题" },
-        { link: "in-depth/access", text: "权限" },
-        { link: "in-depth/locale", text: "国际化" },
-        { link: "in-depth/features", text: "常用功能" },
-        { link: "in-depth/check-updates", text: "检查更新" },
-        { link: "in-depth/loading", text: "全局loading" },
-        { link: "in-depth/ui-framework", text: "组件库切换" },
-      ],
-    },
-    {
-      text: "工程",
-      items: [
-        { link: "project/standard", text: "规范" },
-        { link: "project/cli", text: "CLI" },
-        { link: "project/dir", text: "目录说明" },
-        { link: "project/test", text: "单元测试" },
-        { link: "project/tailwindcss", text: "Tailwind CSS" },
-        { link: "project/changeset", text: "Changeset" },
-        { link: "project/vite", text: "Vite Config" },
-      ],
-    },
-    {
-      text: "其他",
-      items: [
-        { link: "other/project-update", text: "项目更新" },
-        { link: "other/remove-code", text: "移除代码" },
-        { link: "other/faq", text: "常见问题" },
-      ],
-    },
-  ];
-}
-function sidebarCommercial(): DefaultTheme.SidebarItem[] {
-  return [
-    {
-      link: "community",
-      text: "社区交流",
-    },
-    {
-      link: "technical-support",
-      text: "技术支持",
-    },
-    {
-      link: "customized",
-      text: "定制开发",
     },
   ];
 }
