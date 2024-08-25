@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-23 15:34:45
+ * @LastEditTime: 2024-08-25 15:31:33
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
@@ -18,8 +18,9 @@ import {
   GitChangelogMarkdownSection,
 } from "@nolebase/vitepress-plugin-git-changelog/vite";
 import { BiDirectionalLinks } from "@nolebase/markdown-it-bi-directional-links";
-import { version } from "../package.json";
+
 import sidebar from "../pages/helper/sidebar";
+import { nav } from "../pages/helper/nav";
 
 // https://vitepress.dev/reference/site-config
 export default withPwa(
@@ -194,57 +195,4 @@ function pwa(): PwaOptions {
       globPatterns: ["**/*.{css,js,html,svg,png,ico,txt,woff2}"],
     },
   };
-}
-
-function nav(): DefaultTheme.NavItem[] {
-  return [
-    {
-      text: "文档",
-      items: [
-        {
-          link: "/guide/introduction/vben",
-          text: "指南",
-        },
-        {
-          text: "历史版本",
-          items: [
-            {
-              link: "https://doc.vvbin.cn",
-              text: "2.x版本文档",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      text: version,
-      items: [
-        {
-          link: "https://github.com/vbenjs/vue-vben-admin/releases",
-          text: "更新日志",
-        },
-        {
-          link: "https://github.com/orgs/vbenjs/projects/5",
-          text: "路线图",
-        },
-        {
-          link: "https://github.com/vbenjs/vue-vben-admin/blob/main/.github/contributing.md",
-          text: "贡献",
-        },
-      ],
-    },
-    {
-      text: "🦄 教程",
-      items: [
-        {
-          link: "/tutorial/vitepress",
-          text: "vitepress搭建并部署网站",
-        },
-        {
-          link: "/tutorial/airport",
-          text: "机场服务",
-        },
-      ],
-    },
-  ];
 }

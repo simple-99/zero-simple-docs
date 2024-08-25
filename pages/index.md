@@ -35,22 +35,6 @@ features:
     details: 制作精美的开源 3D 图标
     link: https://3dicons.co/?ref=dailydev
     linkText: 获取3D Icon
-  - icon: 🌐
-    title: 国际化
-    details: 内置国际化方案，支持多语言切换，满足国际化需求。
-    link: /guide/in-depth/locale
-    linkText: 国际化文档
-  - icon: 🔐
-    title: 权限管理
-    details: 内置权限管理方案，支持多种权限控制方式，满足各种权限需求。
-    link: /guide/in-depth/access
-    linkText: 权限文档
-  - title: Vite
-    icon:
-      src: /logos/vite.svg
-    details: 现代化的前端构建工具，快速冷启动，瞬间热更新。
-    link: https://vitejs.dev/
-    linkText: 官方站点
   - title: Shadcn UI
     icon:
       src: /logos/shadcn-ui.svg
