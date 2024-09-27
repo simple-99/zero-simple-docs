@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-25 15:31:44
- * @LastEditTime: 2024-08-25 15:36:50
+ * @LastEditTime: 2024-09-27 10:48:40
  * @FilePath: \zero-simple-docs\pages\helper\nav.ts
  * @Description:
  */
@@ -20,6 +20,15 @@ export const nav = (): DefaultTheme.NavItem[] => {
             {
               link: "/uiComponents/tailwind",
               text: "Tailwind CSS",
+            },
+          ],
+        },
+        {
+          text: "CesiumJS",
+          items: [
+            {
+              link: "/cesium/customMaterial",
+              text: "自定义材质",
             },
           ],
         },
