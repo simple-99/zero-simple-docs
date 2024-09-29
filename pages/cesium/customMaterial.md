@@ -431,3 +431,224 @@ this.viewer.entities.add({
 ```
 
 :::
+
+## 3.流动线材质
+
+::: code-group
+
+```ts [FlowingLineMaterialProperty.ts]
+import * as Cesium from "cesium";
+
+interface FlowingLineOptions {
+  color?: Cesium.Color;
+  arrowColor?: Cesium.Color;
+  duration?: number;
+  count?: number;
+  gradient?: number;
+  arrowSize?: number;
+  arrowAlpha?: number;
+}
+
+export class FlowingLineMaterialProperty {
+  private _definitionChanged: Cesium.Event;
+  private _color: any;
+  private _arrowColor: any;
+  private _colorSubscription: any;
+  private _arrowColorSubscription: any;
+  private _time: number;
+  public duration: number;
+  public count: number;
+  public gradient: number;
+  public arrowSize: number;
+  public arrowAlpha: number;
+
+  constructor(options: FlowingLineOptions = {}) {
+    this._definitionChanged = new Cesium.Event();
+    this._color = undefined;
+    this._arrowColor = undefined;
+    this._colorSubscription = undefined;
+    this._arrowColorSubscription = undefined;
+    this.color = options.color || Cesium.Color.LIME;
+    this.arrowColor = options.arrowColor || Cesium.Color.ORANGE.withAlpha(0.8);
+    this.duration = Cesium.defaultValue(options.duration, 3000);
+    this.count = Cesium.defaultValue(options.count, 3);
+    this.gradient = Cesium.defaultValue(options.gradient, 0.1);
+    this.arrowSize = Cesium.defaultValue(options.arrowSize, 0.15);
+    this.arrowAlpha = Cesium.defaultValue(options.arrowAlpha, 0.8);
+    this._time = performance.now();
+
+    this.init();
+  }
+
+  get isConstant() {
+    return false;
+  }
+
+  get definitionChanged() {
+    return this._definitionChanged;
+  }
+
+  getType() {
+    return "FlowingLine";
+  }
+
+  getValue(time: any, result: any) {
+    if (!Cesium.defined(result)) {
+      result = {};
+    }
+    result.color = Cesium.Property.getValueOrClonedDefault(
+      this._color,
+      time,
+      Cesium.Color.WHITE,
+      result.color
+    );
+    result.arrowColor = Cesium.Property.getValueOrClonedDefault(
+      this._arrowColor,
+      time,
+      Cesium.Color.WHITE,
+      result.arrowColor
+    );
+    result.time =
+      ((performance.now() - this._time) % this.duration) / this.duration;
+    result.count = this.count;
+    result.gradient = this.gradient;
+    result.arrowSize = this.arrowSize;
+    result.arrowAlpha = this.arrowAlpha;
+    return result;
+  }
+
+  equals(other: any) {
+    return (
+      this === other ||
+      (other instanceof FlowingLineMaterialProperty &&
+        Cesium.Property.equals(this._color, other._color) &&
+        Cesium.Property.equals(this._arrowColor, other._arrowColor) &&
+        this.duration === other.duration &&
+        this.count === other.count &&
+        this.gradient === other.gradient &&
+        this.arrowSize === other.arrowSize &&
+        this.arrowAlpha === other.arrowAlpha)
+    );
+  }
+
+  init() {
+    Cesium.Material._materialCache.addMaterial("FlowingLine", {
+      fabric: {
+        type: "FlowingLine",
+        uniforms: {
+          color: new Cesium.Color(1.0, 1.0, 1.0, 1.0),
+          arrowColor: new Cesium.Color(1.0, 1.0, 1.0, 0.8),
+          time: 0,
+          count: 1,
+          gradient: 0.1,
+          arrowSize: 0.15,
+          arrowAlpha: 0.8,
+        },
+        source: this.getShaderSource(),
+      },
+      translucent: () => true,
+    });
+  }
+
+  getShaderSource() {
+    return `
+      uniform vec4 color;
+      uniform vec4 arrowColor;
+      uniform float time;
+      uniform float count;
+      uniform float gradient;
+      uniform float arrowSize;
+      uniform float arrowAlpha;
+
+      float arrow(vec2 uv, float offset) {
+        float a = atan(uv.y, uv.x);
+        float r = 3.141592 / 3.0;
+        float d = cos(floor(0.5 + a / r) * r - a) * length(uv);
+        return smoothstep(0.5, 0.4, d) * smoothstep(-1.0 + offset, -0.9 + offset, uv.x);
+      }
+
+      czm_material czm_getMaterial(czm_materialInput materialInput) {
+        czm_material material = czm_getDefaultMaterial(materialInput);
+
+        vec2 st = materialInput.st;
+        float t = time;
+
+        vec3 baseColor = color.rgb;
+        vec3 arrowCol = arrowColor.rgb;
+        float alpha = 0.0;
+        float arrowIntensity = 0.0;
+
+        float lineWidth = 0.1;
+        float pulseWidth = 1.0 / count;
+
+        for (int i = 0; i < int(count); i++) {
+          float pulse = fract(st.s - t + float(i) * pulseWidth);
+          float glow = smoothstep(0.5 - gradient, 0.5 + gradient, pulse) * 
+                       (1.0 - smoothstep(0.5 + gradient, 1.0, pulse));
+          
+          alpha = max(alpha, glow);
+
+          // Add arrow
+          vec2 uv = vec2(fract(st.s * count - t * count) - 0.5, st.t - 0.5) / arrowSize;
+          float arrowMask = arrow(uv, 0.5) * glow;
+          arrowIntensity = max(arrowIntensity, arrowMask);
+        }
+
+        alpha *= smoothstep(0.0, lineWidth, st.t) * (1.0 - smoothstep(1.0 - lineWidth, 1.0, st.t));
+
+        // Blend base color and arrow color
+        vec3 finalColor = mix(baseColor, arrowCol, arrowIntensity * arrowAlpha);
+        float finalAlpha = max(alpha * color.a, arrowIntensity * arrowAlpha);
+
+        material.diffuse = finalColor;
+        material.alpha = finalAlpha;
+        material.emission = finalColor * finalAlpha;
+
+        return material;
+      }
+    `;
+  }
+}
+
+Object.defineProperties(FlowingLineMaterialProperty.prototype, {
+  color: Cesium.createPropertyDescriptor("color"),
+  arrowColor: Cesium.createPropertyDescriptor("arrowColor"),
+});
+```
+
+```ts [test.ts]
+// 创建自定义材质实例
+const flowingArrowLineMaterial = new FlowingLineMaterialProperty({
+  color: Cesium.Color.ORANGE.withAlpha(0.8),
+  arrowColor: Cesium.Color.LIME,
+  duration: 10000,
+  count: 3,
+  gradient: 0.1,
+  arrowSize: 0.6,
+  arrowAlpha: 1.0,
+});
+
+// 定义线条路径点
+const positions = Cesium.Cartesian3.fromDegreesArray([
+  116.3915,
+  39.9053, // 北京
+  121.4737,
+  31.2304, // 上海
+  113.2644,
+  23.1291, // 广州
+  103.8701,
+  1.3644, // 新加坡
+]);
+
+// 创建线条实体
+const entity = viewer.entities.add({
+  polyline: {
+    positions: positions,
+    width: 5,
+    material: flowingArrowLineMaterial,
+  },
+});
+
+// 将视图定位到线条
+viewer.zoomTo(entity);
+```
