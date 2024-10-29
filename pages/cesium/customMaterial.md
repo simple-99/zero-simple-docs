@@ -652,3 +652,183 @@ const entity = viewer.entities.add({
 // 将视图定位到线条
 viewer.zoomTo(entity);
 ```
+
+## 4.泛光墙材质
+
+::: code-group
+
+```ts [DynamicWallMaterialProperty.ts]
+//@ts-nocheck
+import * as Cesium from "cesium";
+
+interface DynamicWallOptions {
+  color?: Cesium.Color;
+  duration?: number;
+  trailImage?: string;
+  count?: number;
+  freely?: "vertical" | "standard";
+  direction?: "+" | "-";
+}
+
+export default class DynamicWallMaterialProperty {
+  private _definitionChanged: Cesium.Event;
+  private _color: Cesium.Property | undefined;
+  private _colorSubscription: Cesium.Event.RemoveCallback | undefined;
+  private _time: number;
+  public duration: number;
+  public trailImage: string;
+  public count: number;
+  public freely: "vertical" | "standard";
+  public direction: "+" | "-";
+
+  constructor(options: DynamicWallOptions = {}) {
+    this._definitionChanged = new Cesium.Event();
+    this._color = undefined;
+    this._colorSubscription = undefined;
+    this._time = new Date().getTime();
+
+    this.color = options.color || Cesium.Color.BLUE;
+    this.duration = Cesium.defaultValue(options.duration, 1000);
+    this.trailImage = options.trailImage || Cesium.Material.DefaultImageId;
+    this.count = Cesium.defaultValue(options.count, 3.0);
+    this.freely = options.freely || "vertical";
+    this.direction = options.direction || "-";
+
+    Cesium.Material._materialCache.addMaterial(
+      Cesium.Material.DynamicWallMaterialType,
+      {
+        fabric: {
+          type: Cesium.Material.DynamicWallMaterialType,
+          uniforms: {
+            color: new Cesium.Color(1.0, 0.0, 0.0, 0.5),
+            image: this.trailImage,
+            time: 0,
+            count: this.count,
+            freely: this.freely === "vertical" ? 0 : 1,
+            direction: this.direction === "+" ? 1 : -1,
+          },
+          source: DynamicWallMaterialProperty.getShaderSource(),
+        },
+        translucent: () => true,
+      }
+    );
+  }
+
+  get isConstant() {
+    return false;
+  }
+
+  get definitionChanged() {
+    return this._definitionChanged;
+  }
+
+  getType() {
+    return Cesium.Material.DynamicWallMaterialType;
+  }
+
+  getValue(time: Cesium.JulianDate, result: any) {
+    if (!Cesium.defined(result)) {
+      result = {};
+    }
+
+    result.color = Cesium.Property.getValueOrClonedDefault(
+      this._color,
+      time,
+      Cesium.Color.WHITE,
+      result.color
+    );
+    result.image = this.trailImage;
+    result.time =
+      ((new Date().getTime() - this._time) % this.duration) / this.duration;
+
+    return result;
+  }
+
+  equals(other: DynamicWallMaterialProperty) {
+    return (
+      this === other ||
+      (other instanceof DynamicWallMaterialProperty &&
+        Cesium.Property.equals(this._color, other._color) &&
+        this.duration === other.duration &&
+        this.trailImage === other.trailImage &&
+        this.count === other.count &&
+        this.freely === other.freely &&
+        this.direction === other.direction)
+    );
+  }
+
+  static getShaderSource() {
+    return `
+      uniform vec4 color;
+      uniform sampler2D image;
+      uniform float time;
+      uniform float count;
+      uniform float freely;
+      uniform float direction;
+
+      czm_material czm_getMaterial(czm_materialInput materialInput)
+      {
+          czm_material material = czm_getDefaultMaterial(materialInput);
+          vec2 st = materialInput.st;
+          
+          vec4 colorImage;
+          if (freely < 0.5) {
+              // vertical
+              colorImage = texture(image, vec2(fract(st.s), fract(count * st.t + direction * time)));
+          } else {
+              // standard
+              colorImage = texture(image, vec2(fract(count * st.s + direction * time), fract(st.t)));
+          }
+          
+          vec4 fragColor;
+          fragColor.rgb = (colorImage.rgb + color.rgb) / 1.0;
+          fragColor = czm_gammaCorrect(fragColor);
+          
+          material.diffuse = colorImage.rgb;
+          material.alpha = colorImage.a;
+          material.emission = fragColor.rgb;
+          
+          return material;
+      }
+    `;
+  }
+}
+
+Object.defineProperties(DynamicWallMaterialProperty.prototype, {
+  color: Cesium.createPropertyDescriptor("color"),
+});
+
+Cesium.Material.DynamicWallMaterialType = "DynamicWallMaterial";
+```
+
+```ts [test.ts]
+const dynamicWallMaterial = new DynamicWallMaterialProperty({
+  color: Cesium.Color.CYAN,
+  duration: 1500,
+  trailImage: wallMaterial,
+  count: 3.0,
+  freely: "vertical",
+  direction: "-",
+});
+const data = [
+  [104.0185546875, 30.66235300961486],
+  [104.01589393615723, 30.65652022496456],
+  [104.029541015625, 30.65053940942565],
+  [104.0397548675537, 30.65777541087788],
+  [104.03829574584961, 30.66604446357028],
+  [104.0255069732666, 30.667963963897005],
+  [104.0185546875, 30.66235300961486],
+];
+// Then use this material with a Cesium entity or primitive
+const wall = viewer.entities.add({
+  wall: {
+    positions: Cesium.Cartesian3.fromDegreesArray(data.flat()),
+    material: dynamicWallMaterial,
+    maximumHeights: new Array(data.length).fill(500),
+    minimumHeights: new Array(data.length).fill(0),
+  },
+});
+viewer.flyTo(wall);
+```
+
+:::
