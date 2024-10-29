@@ -653,6 +653,8 @@ const entity = viewer.entities.add({
 viewer.zoomTo(entity);
 ```
 
+:::
+
 ## 4.泛光墙材质
 
 ::: code-group
