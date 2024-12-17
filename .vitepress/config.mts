@@ -2,11 +2,12 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-18 13:43:03
- * @LastEditTime: 2024-08-25 15:31:33
+ * @LastEditTime: 2024-12-17 14:31:11
  * @FilePath: \zero-simple-docs\.vitepress\config.mts
  * @Description:
  */
 import type { DefaultTheme, HeadConfig } from "vitepress";
+import ViteHtmlPlugin from "vite-plugin-html";
 
 import { resolve } from "node:path";
 
@@ -41,6 +42,7 @@ export default withPwa(
     //     label: '简体中文',
     //     lang: 'zh-CN',
     srcDir: "pages",
+    ignoreDeadLinks: true,
     themeConfig: {
       darkModeSwitchLabel: "主题",
       darkModeSwitchTitle: "切换到深色模式",
@@ -125,6 +127,13 @@ export default withPwa(
           repoURL: () => "https://github.com/simple-99/zero-simple-docs",
         }),
         GitChangelogMarkdownSection(),
+        ViteHtmlPlugin({
+          minify: {
+            // 忽略 HTML 标签的闭合检查
+            removeEmptyAttributes: false,
+            collapseWhitespace: false,
+          },
+        }),
       ],
       server: {
         fs: {
