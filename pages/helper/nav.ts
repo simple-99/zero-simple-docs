@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-25 15:31:44
- * @LastEditTime: 2024-12-17 13:31:02
+ * @LastEditTime: 2024-12-17 13:33:19
  * @FilePath: \zero-simple-docs\pages\helper\nav.ts
  * @Description:
  */
@@ -49,7 +49,7 @@ export const nav = (): DefaultTheme.NavItem[] => {
           text: "Java基础",
           items: [
             {
-              link: "/java/thread",
+              link: "/Java/thread",
               text: "线程扩展",
             },
           ],
