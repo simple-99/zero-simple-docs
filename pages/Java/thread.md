@@ -2,57 +2,57 @@
 
 ## 1.1 状态介绍
 
-当线程被创建并启动以后，它既不是一启动就进入了执行状态，也不是一直处于执行状态。线程对象在不同的时期有不同的状态。那么Java中的线程存在哪几种状态呢？Java中的线程
+当线程被创建并启动以后，它既不是一启动就进入了执行状态，也不是一直处于执行状态。线程对象在不同的时期有不同的状态。那么 Java 中的线程存在哪几种状态呢？Java 中的线程
 
-状态被定义在了java.lang.Thread.State枚举类中，State枚举类的源码如下：
+状态被定义在了 java.lang.Thread.State 枚举类中，State 枚举类的源码如下：
 
 ```java
 public class Thread {
-    
+
     public enum State {
-    
+
         /* 新建 */
-        NEW , 
+        NEW ,
 
         /* 可运行状态 */
-        RUNNABLE , 
+        RUNNABLE ,
 
         /* 阻塞状态 */
-        BLOCKED , 
+        BLOCKED ,
 
         /* 无限等待状态 */
-        WAITING , 
+        WAITING ,
 
         /* 计时等待 */
-        TIMED_WAITING , 
+        TIMED_WAITING ,
 
         /* 终止 */
         TERMINATED;
-    
+
 	}
-    
+
     // 获取当前线程的状态
     public State getState() {
         return jdk.internal.misc.VM.toThreadState(threadStatus);
     }
-    
+
 }
 ```
 
-通过源码我们可以看到Java中的线程存在6种状态，每种线程状态的含义如下
+通过源码我们可以看到 Java 中的线程存在 6 种状态，每种线程状态的含义如下
 
-| 线程状态      | 具体含义                                                     |
-| ------------- | ------------------------------------------------------------ |
-| NEW           | 一个尚未启动的线程的状态。也称之为初始状态、开始状态。线程刚被创建，但是并未启动。还没调用start方法。MyThread t = new MyThread()只有线程象，没有线程特征。 |
-| RUNNABLE      | 当我们调用线程对象的start方法，那么此时线程对象进入了RUNNABLE状态。那么此时才是真正的在JVM进程中创建了一个线程，线程一经启动并不是立即得到执行，线程的运行与否要听令与CPU的调度，那么我们把这个中间状态称之为可执行状态(RUNNABLE)也就是说它具备执行的资格，但是并没有真正的执行起来而是在等待CPU的度。 |
-| BLOCKED       | 当一个线程试图获取一个对象锁，而该对象锁被其他的线程持有，则该线程进入Blocked状态；当该线程持有锁时，该线程将变成Runnable状态。 |
-| WAITING       | 一个正在等待的线程的状态。也称之为等待状态。造成线程等待的原因有两种，分别是调用Object.wait()、join()方法。处于等待状态的线程，正在等待其他线程去执行一个特定的操作。例如：因为wait()而等待的线程正在等待另一个线程去调用notify()或notifyAll()；一个因为join()而等待的线程正在等待另一个线程结束。 |
-| TIMED_WAITING | 一个在限定时间内等待的线程的状态。也称之为限时等待状态。造成线程限时等待状态的原因有三种，分别是：Thread.sleep(long)，Object.wait(long)、join(long)。 |
-| TERMINATED    | 一个完全运行完成的线程的状态。也称之为终止状态、结束状态     |
+| 线程状态      | 具体含义                                                                                                                                                                                                                                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NEW           | 一个尚未启动的线程的状态。也称之为初始状态、开始状态。线程刚被创建，但是并未启动。还没调用 start 方法。MyThread t = new MyThread()只有线程象，没有线程特征。                                                                                                                                                     |
+| RUNNABLE      | 当我们调用线程对象的 start 方法，那么此时线程对象进入了 RUNNABLE 状态。那么此时才是真正的在 JVM 进程中创建了一个线程，线程一经启动并不是立即得到执行，线程的运行与否要听令与 CPU 的调度，那么我们把这个中间状态称之为可执行状态(RUNNABLE)也就是说它具备执行的资格，但是并没有真正的执行起来而是在等待 CPU 的度。 |
+| BLOCKED       | 当一个线程试图获取一个对象锁，而该对象锁被其他的线程持有，则该线程进入 Blocked 状态；当该线程持有锁时，该线程将变成 Runnable 状态。                                                                                                                                                                              |
+| WAITING       | 一个正在等待的线程的状态。也称之为等待状态。造成线程等待的原因有两种，分别是调用 Object.wait()、join()方法。处于等待状态的线程，正在等待其他线程去执行一个特定的操作。例如：因为 wait()而等待的线程正在等待另一个线程去调用 notify()或 notifyAll()；一个因为 join()而等待的线程正在等待另一个线程结束。          |
+| TIMED_WAITING | 一个在限定时间内等待的线程的状态。也称之为限时等待状态。造成线程限时等待状态的原因有三种，分别是：Thread.sleep(long)，Object.wait(long)、join(long)。                                                                                                                                                            |
+| TERMINATED    | 一个完全运行完成的线程的状态。也称之为终止状态、结束状态                                                                                                                                                                                                                                                         |
 
 各个状态的转换，如下图所示：
 
-![1571652681276](assets/1571652681276.png) 
+![1571652681276](assets/1571652681276.png)
 
 ## 1.2 案例演示
 
@@ -60,11 +60,11 @@ public class Thread {
 
 ### 1.2.1 案例一
 
-本案例主要演示TIME_WAITING的状态转换。
+本案例主要演示 TIME_WAITING 的状态转换。
 
-需求：编写一段代码，依次显示一个线程的这些状态：NEW -> RUNNABLE -> TIME_WAITING -> RUNNABLE ->  TERMINATED
+需求：编写一段代码，依次显示一个线程的这些状态：NEW -> RUNNABLE -> TIME_WAITING -> RUNNABLE -> TERMINATED
 
-为了简化我们的开发，本次我们使用匿名内部类结合lambda表达式的方式使用多线程。
+为了简化我们的开发，本次我们使用匿名内部类结合 lambda 表达式的方式使用多线程。
 
 代码实现
 
@@ -121,7 +121,7 @@ public class ThreadStateDemo01 {
 
 ### 1.2.2 案例二
 
-本案例主要演示WAITING的状态转换。
+本案例主要演示 WAITING 的状态转换。
 
 需求：编写一段代码，依次显示一个线程的这些状态：NEW -> RUNNABLE -> WAITING -> RUNNABLE -> TERMINATED
 
@@ -144,7 +144,7 @@ public class ThreadStateDemo02 {
 
                     //thread1100毫秒之后，通过wait()方法释放obj对象是锁
                     obj.wait();
-                    
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -195,7 +195,7 @@ public class ThreadStateDemo02 {
 
 ### 1.2.3 案例三
 
-本案例主要演示BLOCKED的状态转换。
+本案例主要演示 BLOCKED 的状态转换。
 
 需求：编写一段代码，依次显示一个线程的这些状态：NEW -> RUNNABLE -> BLOCKED -> RUNNABLE -> TERMINATED
 
@@ -298,9 +298,7 @@ Object obj = new Object();
 5.线程执行完毕之后，线程的状态：TERMINATED
 ```
 
-通过上面3个案例的代码演示，我们可以证明开始章节说所述的线程状态以及线程状态转换都是正确的。
-
-
+通过上面 3 个案例的代码演示，我们可以证明开始章节说所述的线程状态以及线程状态转换都是正确的。
 
 # 2 线程池
 
@@ -323,21 +321,21 @@ Object obj = new Object();
 线程池的思路和生产者消费者模型是很接近的
 
 1. 准备一个任务容器
-2. 一次性启动多个(2个)消费者线程
-3. 刚开始任务容器是空的，所以线程都在wait
+2. 一次性启动多个(2 个)消费者线程
+3. 刚开始任务容器是空的，所以线程都在 wait
 4. 直到一个外部线程向这个任务容器中扔了一个"任务"，就会有一个消费者线程被唤醒
 5. 这个消费者线程取出"任务"，并且执行这个任务，执行完毕后，继续等待下一次任务的到来
 
 在整个过程中，都不需要创建新的线程，而是循环使用这些已经存在的线程。
 
-![1571655104091](assets/1571655104091.png) 
+![1571655104091](assets/1571655104091.png)
 
 ### 2.2.2 代码实现
 
 实现思路：
 
 - 创建一个线程池类(ThreadPool)
-- 在该类中定义两个成员变量poolSize(线程池初始化线程的个数) , BlockingQueue<Runnable>(任务容器)
+- 在该类中定义两个成员变量 poolSize(线程池初始化线程的个数) , `BlockingQueue<Runnable>`(任务容器)
 - 通过构造方法来创建两个线程对象(消费者线程)，并且启动
 - 使用内部类的方式去定义一个线程类(TaskThread),可以提供一个构造方法用来初始化线程名称
 - 两个消费者线程需要不断的从任务容器中获取任务，如果没有任务，则线程处于阻塞状态。
@@ -456,9 +454,9 @@ public class ThreadPoolDemo01 {
 线程--->1---->>>处理了任务
 ```
 
-通过控制台的输出，我们可以看到在线程池中存在两个线程，通过这2个线程处理了10个任务。
+通过控制台的输出，我们可以看到在线程池中存在两个线程，通过这 2 个线程处理了 10 个任务。
 
-使用有参构造方法创建线程池对象，传递的参数是5，控制台输出结果
+使用有参构造方法创建线程池对象，传递的参数是 5，控制台输出结果
 
 ```
 线程--->3---->>>处理了任务
@@ -473,15 +471,15 @@ public class ThreadPoolDemo01 {
 线程--->0---->>>处理了任务
 ```
 
-通过控制台的输出，我们可以看到在线程池中存在两个线程，通过这5个线程处理了10个任务。
+通过控制台的输出，我们可以看到在线程池中存在两个线程，通过这 5 个线程处理了 10 个任务。
 
-## 2.3 JDK中线程池
+## 2.3 JDK 中线程池
 
 ### 2.3.1 Executors
 
-JDK对线程池也进行了相关的实现，在真实企业开发中我们也很少去自定义线程池，而是使用JDK中自带的线程池。
+JDK 对线程池也进行了相关的实现，在真实企业开发中我们也很少去自定义线程池，而是使用 JDK 中自带的线程池。
 
-我们可以使用Executors中所提供的**静态**方法来创建线程池。
+我们可以使用 Executors 中所提供的**静态**方法来创建线程池。
 
 <font color="blue" size="3">**获取线程池的方法**</font>：
 
@@ -496,20 +494,18 @@ ScheduledExecutorService newSingleThreadScheduledExecutor(): 初始化一个具�
 									//按照固定的计划去执行线程，一个做完之后按照计划再做另一个
 ```
 
-这个方法返回的都是ExecutorService类型的对象(ScheduledExecutorService继承ExecutorService),而ExecutorService可以看做就是一个线程池，那么ExecutorService
+这个方法返回的都是 ExecutorService 类型的对象(ScheduledExecutorService 继承 ExecutorService),而 ExecutorService 可以看做就是一个线程池，那么 ExecutorService
 
 给我们提供了哪些方法供我们使用呢？
 
-<font color="blue" size="3">**ExecutorService中的常见方法**</font>：
+<font color="blue" size="3">**ExecutorService 中的常见方法**</font>：
 
 ```java
 Future<?> submit(Runnable task)：	提交任务方法
-void shutdown()：					关闭线程池的方法	
+void shutdown()：					关闭线程池的方法
 ```
 
-
-
-<font color="blue" size="3">**案例1**</font>：演示newCachedThreadPool方法所获取到的线程池的特点
+<font color="blue" size="3">**案例 1**</font>：演示 newCachedThreadPool 方法所获取到的线程池的特点
 
 测试类
 
@@ -588,9 +584,7 @@ pool-1-thread-1---执行了任务
 
 我们发现是通过一个线程执行了两个任务。此时就说明线程池中的线程"pool-1-thread-1"被线程池回收了，成为了空闲线程，当我们再次提交任务的时候，该线程就去执行新的任务。
 
-
-
-<font color="blue" size="3">**案例2**</font>：演示newFixedThreadPool方法所获取到的线程池的特点
+<font color="blue" size="3">**案例 2**</font>：演示 newFixedThreadPool 方法所获取到的线程池的特点
 
 测试类
 
@@ -627,11 +621,9 @@ pool-1-thread-2----->>>执行了任务
 pool-1-thread-3----->>>执行了任务
 ```
 
-通过控制台的输出结果，我们可以看到5个任务是通过3个线程进行执行的，说明此线程池中存在三个线程对象
+通过控制台的输出结果，我们可以看到 5 个任务是通过 3 个线程进行执行的，说明此线程池中存在三个线程对象
 
-
-
-<font color="blue" size="3">**案例3**</font>：演示newSingleThreadExecutor方法所获取到的线程池的特点
+<font color="blue" size="3">**案例 3**</font>：演示 newSingleThreadExecutor 方法所获取到的线程池的特点
 
 测试类
 
@@ -668,11 +660,9 @@ pool-1-thread-1----->>>执行了任务
 pool-1-thread-1----->>>执行了任务
 ```
 
-通过控制台的输出结果，我们可以看到5个任务是通过1个线程进行执行的,说明此线程池中只存在一个线程对象。
+通过控制台的输出结果，我们可以看到 5 个任务是通过 1 个线程进行执行的,说明此线程池中只存在一个线程对象。
 
-
-
-<font color="blue" size="3">**案例4**</font>： 演示newSingleThreadScheduledExecutor方法所获取到的线程池的特点(初始化一个具有一个线程的线程池)
+<font color="blue" size="3">**案例 4**</font>： 演示 newSingleThreadScheduledExecutor 方法所获取到的线程池的特点(初始化一个具有一个线程的线程池)
 
 测试类
 
@@ -709,13 +699,11 @@ pool-1-thread-1---->>执行了任务
 pool-1-thread-1---->>执行了任务
 ```
 
-通过控制台的输出结果，我们可以看到5个任务是通过1个线程进行执行的,说明此线程池中只存在一个线程对象。
+通过控制台的输出结果，我们可以看到 5 个任务是通过 1 个线程进行执行的,说明此线程池中只存在一个线程对象。
 
+<font color="blue" size="3">**案例 5**</font>： 演示 newSingleThreadScheduledExecutor 方法所获取到的线程池的特点(支持定时及周期性任务执行)
 
-
-<font color="blue" size="3">**案例5**</font>： 演示newSingleThreadScheduledExecutor方法所获取到的线程池的特点(支持定时及周期性任务执行)
-
-ScheduledExecutorService中和定时以及周期性执行相关的方法
+ScheduledExecutorService 中和定时以及周期性执行相关的方法
 
 ```java
 /*
@@ -736,7 +724,7 @@ public ScheduledFuture<?> schedule(Runnable command,long delay, TimeUnit unit);
 public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit);
 ```
 
-测试类1(演示定时执行)
+测试类 1(演示定时执行)
 
 ```java
 public class ExecutorsDemo06 {
@@ -759,7 +747,7 @@ public class ExecutorsDemo06 {
 }
 ```
 
-测试类2(演示周期性执行)
+测试类 2(演示周期性执行)
 
 ```java
 public class ExecutorsDemo07 {
@@ -784,19 +772,19 @@ public class ExecutorsDemo07 {
 
 #### 1) 基本使用
 
-刚才我们是通过Executors中的静态方法去创建线程池的，通过查看源代码我们发现，其底层都是通过ThreadPoolExecutor构建的。比如：newFixedThreadPool方法的源码
+刚才我们是通过 Executors 中的静态方法去创建线程池的，通过查看源代码我们发现，其底层都是通过 ThreadPoolExecutor 构建的。比如：newFixedThreadPool 方法的源码
 
 ```java
 public static ExecutorService newFixedThreadPool(int nThreads) {
-    
+
     // 创建了ThreadPoolExecutor对象，然后直接返回
 	return new ThreadPoolExecutor(nThreads, nThreads,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 }
 ```
 
-那么也可以使用ThreadPoolExecutor去创建线程池。
+那么也可以使用 ThreadPoolExecutor 去创建线程池。
 
-ThreadPoolExecutor最完整的构造方法：
+ThreadPoolExecutor 最完整的构造方法：
 
 ```java
 public ThreadPoolExecutor(int corePoolSize,
@@ -816,11 +804,11 @@ maximumPoolSize：最大线程数，不能小于等于0，maximumPoolSize >= cor
 keepAliveTime：  空闲线程最大存活时间,不能小于0
 unit：           时间单位
 workQueue：      任务队列，不能为null
-threadFactory：  创建线程工厂,不能为null      
-handler：        任务的拒绝策略,不能为null    
+threadFactory：  创建线程工厂,不能为null
+handler：        任务的拒绝策略,不能为null
 ```
 
-案例演示通过ThreadPoolExecutor创建线程池
+案例演示通过 ThreadPoolExecutor 创建线程池
 
 ```java
 public class ThreadPoolExecutorDemo01 {
@@ -854,35 +842,27 @@ public class ThreadPoolExecutorDemo01 {
 
 接下来我们就来研究一下线程池的工作原理，如下图所示
 
-![1571732060388](assets/1571732060388.png) 
+![1571732060388](assets/1571732060388.png)
 
-
-
-当我们通过submit方法向线程池中提交任务的时候，具体的工作流程如下：
+当我们通过 submit 方法向线程池中提交任务的时候，具体的工作流程如下：
 
 1. 客户端每次提交一个任务，线程池就会在核心线程池中创建一个工作线程来执行这个任务。当核心线程池中的线程已满时，则进入下一步操作。
 2. 把任务试图存储到工作队列中。如果工作队列没有满，则将新提交的任务存储在这个工作队列里，等待核心线程池中的空闲线程执行。如果工作队列满了，则进入下个流程。
 3. 线程池会再次在非核心线程池区域去创建新工作线程来执行任务，直到当前线程池总线程数量超过最大线程数时，就是按照指定的任务处理策略处理多余的任务。
 
-
-
 举例说明：
 
-假如有一个工厂，工厂里面有10个工人(正式员工)，每个工人同时只能做一件任务。因此只要当10个工人中有工人是空闲的，来了任务就分配给空闲的工人做；当10个工人都有任务在做时，
+假如有一个工厂，工厂里面有 10 个工人(正式员工)，每个工人同时只能做一件任务。因此只要当 10 个工人中有工人是空闲的，来了任务就分配给空闲的工人做；当 10 个工人都有任务在做时，
 
-如果还来了任务，就把任务进行排队等待；如果说新任务数目增长的速度远远大于工人做任务的速度，那么此时工厂主管可能会想补救措施，比如重新招4个临时工人进来；然后就将任务也分配
+如果还来了任务，就把任务进行排队等待；如果说新任务数目增长的速度远远大于工人做任务的速度，那么此时工厂主管可能会想补救措施，比如重新招 4 个临时工人进来；然后就将任务也分配
 
-给这4个临时工人做；如果说着14个工人做任务的速度还是不够，此时工厂主管可能就要考虑不再接收新的任务或者抛弃前面的一些任务了。当这14个工人当中有人空闲时，而新任务增长的速度
+给这 4 个临时工人做；如果说着 14 个工人做任务的速度还是不够，此时工厂主管可能就要考虑不再接收新的任务或者抛弃前面的一些任务了。当这 14 个工人当中有人空闲时，而新任务增长的速度
 
-又比较缓慢，工厂主管可能就考虑辞掉4个临时工了，只保持原来的10个工人，毕竟请额外的工人是要花钱的。
+又比较缓慢，工厂主管可能就考虑辞掉 4 个临时工了，只保持原来的 10 个工人，毕竟请额外的工人是要花钱的。
 
+这里的工厂可以看做成是一个线程池，每一个工人可以看做成是一个线程。其中 10 个正式员工，可以看做成是核心线程池中的线程，临时工就是非核心线程池中的线程。当临时工处于空闲状态
 
-
-这里的工厂可以看做成是一个线程池，每一个工人可以看做成是一个线程。其中10个正式员工，可以看做成是核心线程池中的线程，临时工就是非核心线程池中的线程。当临时工处于空闲状态
-
-的时候，那么如果空闲的时间超过keepAliveTime所指定的时间，那么就会被销毁。
-
-
+的时候，那么如果空闲的时间超过 keepAliveTime 所指定的时间，那么就会被销毁。
 
 #### 3) 案例演示
 
@@ -913,43 +893,43 @@ public class ThreadPoolExecutorDemo01 {
 }
 ```
 
-初次debug方式启动线程，查看变量值
+初次 debug 方式启动线程，查看变量值
 
-![1571735388181](assets/1571735388181.png) 
+![1571735388181](assets/1571735388181.png)
 
-由于此时还没有提交任务，因此线程池中的线程数量为0，工作队列的任务数量也为0；提交一个任务
+由于此时还没有提交任务，因此线程池中的线程数量为 0，工作队列的任务数量也为 0；提交一个任务
 
-![1571735465100](assets/1571735465100.png) 
+![1571735465100](assets/1571735465100.png)
 
 再次查看各个值的变化
 
-![1571735607347](assets/1571735607347.png) 
+![1571735607347](assets/1571735607347.png)
 
 再次提交一个任务
 
-![1571735465100](assets/1571735465100.png) 
+![1571735465100](assets/1571735465100.png)
 
 再次查看各个值的变化
 
-![1571735715977](assets/1571735715977.png) 
+![1571735715977](assets/1571735715977.png)
 
-此时会把第二个任务存储到工作队列中，因此工作队列的值为1了。再次提交一个任务
+此时会把第二个任务存储到工作队列中，因此工作队列的值为 1 了。再次提交一个任务
 
-![1571735465100](assets/1571735465100.png) 
+![1571735465100](assets/1571735465100.png)
 
 再次查看各个值的变化
 
-![1571735904991](assets/1571735904991.png) 
+![1571735904991](assets/1571735904991.png)
 
-此时3个任务都以及提交完毕，断点跳过。经过20s以后，再次查看该进程中的线程。
+此时 3 个任务都以及提交完毕，断点跳过。经过 20s 以后，再次查看该进程中的线程。
 
-![1571736824748](assets/1571736824748.png) 
+![1571736824748](assets/1571736824748.png)
 
 我们发现非核心线程已经被线程池回收了。
 
 #### 4) 任务拒绝策略
 
-RejectedExecutionHandler是jdk提供的一个任务拒绝策略接口，它下面存在4个子类。
+RejectedExecutionHandler 是 jdk 提供的一个任务拒绝策略接口，它下面存在 4 个子类。
 
 ```java
 ThreadPoolExecutor.AbortPolicy: 		    丢弃任务并抛出RejectedExecutionException异常。是默认的策略。
@@ -960,9 +940,7 @@ ThreadPoolExecutor.CallerRunsPolicy:        调用任务的run()方法绕过线�
 
 注：明确线程池对多可执行的任务数 = 队列容量 + 最大线程数
 
-
-
-<font color="blue" size="3">**案例演示1**</font>：演示ThreadPoolExecutor.AbortPolicy任务处理策略
+<font color="blue" size="3">**案例演示 1**</font>：演示 ThreadPoolExecutor.AbortPolicy 任务处理策略
 
 ```java
 public class ThreadPoolExecutorDemo01 {
@@ -1002,11 +980,9 @@ pool-1-thread-2---->> 执行了任务
 pool-1-thread-3---->> 执行了任务
 ```
 
-控制台报错，仅仅执行了4个任务，有一个任务被丢弃了
+控制台报错，仅仅执行了 4 个任务，有一个任务被丢弃了
 
-
-
-<font color="blue" size="3">**案例演示2**</font>：演示ThreadPoolExecutor.DiscardPolicy任务处理策略
+<font color="blue" size="3">**案例演示 2**</font>：演示 ThreadPoolExecutor.DiscardPolicy 任务处理策略
 
 ```java
 public class ThreadPoolExecutorDemo02 {
@@ -1039,11 +1015,9 @@ pool-1-thread-3---->> 执行了任务
 pool-1-thread-2---->> 执行了任务
 ```
 
-控制台没有报错，仅仅执行了4个任务，有一个任务被丢弃了
+控制台没有报错，仅仅执行了 4 个任务，有一个任务被丢弃了
 
-
-
-<font color="blue" size="3">**案例演示3**</font>：演示ThreadPoolExecutor.DiscardOldestPolicy任务处理策略
+<font color="blue" size="3">**案例演示 3**</font>：演示 ThreadPoolExecutor.DiscardOldestPolicy 任务处理策略
 
 ```java
 public class ThreadPoolExecutorDemo02 {
@@ -1065,7 +1039,7 @@ public class ThreadPoolExecutorDemo02 {
             threadPoolExecutor.submit(() -> {
                 System.out.println(Thread.currentThread().getName() + "---->> 执行了任务" + y);
             });
-            
+
         }
 
     }
@@ -1081,11 +1055,9 @@ pool-1-thread-3---->> 执行了任务3
 pool-1-thread-1---->> 执行了任务4
 ```
 
-由于任务1在线程池中等待时间最长，因此任务1被丢弃。
+由于任务 1 在线程池中等待时间最长，因此任务 1 被丢弃。
 
-
-
-<font color="blue" size="3">**案例演示4**</font>：演示ThreadPoolExecutor.CallerRunsPolicy任务处理策略
+<font color="blue" size="3">**案例演示 4**</font>：演示 ThreadPoolExecutor.CallerRunsPolicy 任务处理策略
 
 ```java
 public class ThreadPoolExecutorDemo04 {
@@ -1122,17 +1094,15 @@ pool-1-thread-1---->> 执行了任务
 main---->> 执行了任务
 ```
 
-通过控制台的输出，我们可以看到次策略没有通过线程池中的线程执行任务，而是直接调用任务的run()方法绕过线程池直接执行。
+通过控制台的输出，我们可以看到次策略没有通过线程池中的线程执行任务，而是直接调用任务的 run()方法绕过线程池直接执行。
 
-
-
-# 3 volatile关键字
+# 3 volatile 关键字
 
 ## 3.1 看程序说结果
 
 分析如下程序，说出在控制台的输出结果。
 
-Thread的子类
+Thread 的子类
 
 ```java
 public class VolatileThread extends Thread {
@@ -1163,7 +1133,7 @@ public class VolatileThread extends Thread {
 
 ```java
 public class VolatileThreadDemo01 {
-    
+
     public static void main(String[] args) {
 
         // 创建VolatileThread线程对象
@@ -1174,7 +1144,7 @@ public class VolatileThreadDemo01 {
         while(true) {
             System.out.println("main线程中获取开启的线程中flag的值为" + volatileThread.isFlag());
         }
-        
+
     }
 }
 ```
@@ -1185,21 +1155,21 @@ public class VolatileThreadDemo01 {
 前面是false，过了一段时间之后就变成了true
 ```
 
-按照我们的分析，当我们把volatileThread线程启动起来以后，那么volatileThread线程开始执行。在volatileThread线程的run方法中，线程休眠1s，休眠一秒以后那么flag的值应该为
+按照我们的分析，当我们把 volatileThread 线程启动起来以后，那么 volatileThread 线程开始执行。在 volatileThread 线程的 run 方法中，线程休眠 1s，休眠一秒以后那么 flag 的值应该为
 
-true，此时我们在主线程中不停的获取flag的值。发现前面释放false，后面是true
+true，此时我们在主线程中不停的获取 flag 的值。发现前面释放 false，后面是 true
 
-信息，那么这是为什么呢？要想知道原因，那么我们就需要学习一下JMM。
+信息，那么这是为什么呢？要想知道原因，那么我们就需要学习一下 JMM。
 
 ## 3.2 JMM
 
-概述：JMM(Java Memory Model)Java内存模型,是java虚拟机规范中所定义的一种内存模型。
+概述：JMM(Java Memory Model)Java 内存模型,是 java 虚拟机规范中所定义的一种内存模型。
 
-Java内存模型(Java Memory Model)描述了Java程序中各种变量(线程共享变量)的访问规则，以及在JVM中将变量存储到内存和从内存中读取变量这样的底层细节。
+Java 内存模型(Java Memory Model)描述了 Java 程序中各种变量(线程共享变量)的访问规则，以及在 JVM 中将变量存储到内存和从内存中读取变量这样的底层细节。
 
 特点：
 
-1. 所有的共享变量都存储于主内存(计算机的RAM)这里所说的变量指的是实例变量和类变量。不包含局部变量，因为局部变量是线程私有的，因此不存在竞争问题。
+1. 所有的共享变量都存储于主内存(计算机的 RAM)这里所说的变量指的是实例变量和类变量。不包含局部变量，因为局部变量是线程私有的，因此不存在竞争问题。
 
 2. 每一个线程还存在自己的工作内存，线程的工作内存，保留了被线程使用的变量的工作副本。
 
@@ -1207,27 +1177,27 @@ Java内存模型(Java Memory Model)描述了Java程序中各种变量(线程共�
 
    内存完成。
 
-![1571743818653](assets/1571743818653.png) 
+![1571743818653](assets/1571743818653.png)
 
 ## 3.3 问题分析
 
-了解了一下JMM,那么接下来我们就来分析一下上述程序产生问题的原因。
+了解了一下 JMM,那么接下来我们就来分析一下上述程序产生问题的原因。
 
-![1571744627663](assets/1571744627663.png)  
+![1571744627663](assets/1571744627663.png)
 
 产生问题的流程分析：
 
-1. VolatileThread线程从主内存读取到数据放入其对应的工作内存
+1. VolatileThread 线程从主内存读取到数据放入其对应的工作内存
 
-2. 将flag的值更改为true，但是这个时候flag的值还没有回写主内存
+2. 将 flag 的值更改为 true，但是这个时候 flag 的值还没有回写主内存
 
-3. 此时main线程读取到了flag的值并将其放入到自己的工作内存中，此时flag的值为false
+3. 此时 main 线程读取到了 flag 的值并将其放入到自己的工作内存中，此时 flag 的值为 false
 
-4. VolatileThread线程将flag的值写回到主内存，但是main函数里面的while(true)调用的是系统比较底层的代码，速度快，快到没有时间再去读取主内存中的值，所以while(true)
+4. VolatileThread 线程将 flag 的值写回到主内存，但是 main 函数里面的 while(true)调用的是系统比较底层的代码，速度快，快到没有时间再去读取主内存中的值，所以 while(true)
 
-   读取到的值一直是false。(如果有一个时刻main线程从主内存中读取到了flag的最新值，那么if语句就可以执行，main线程何时从主内存中读取最新的值，我们无法控制)
+   读取到的值一直是 false。(如果有一个时刻 main 线程从主内存中读取到了 flag 的最新值，那么 if 语句就可以执行，main 线程何时从主内存中读取最新的值，我们无法控制)
 
-我们可以让主线程执行慢一点，执行慢一点以后，在某一个时刻，可能就会读取到主内存中最新的flag的值，那么if语句就可以进行执行。
+我们可以让主线程执行慢一点，执行慢一点以后，在某一个时刻，可能就会读取到主内存中最新的 flag 的值，那么 if 语句就可以进行执行。
 
 测试类
 
@@ -1264,7 +1234,7 @@ flag=true
 ....
 ```
 
-此时我们可以看到if语句已经执行了。当然我们在真实开发中可能不能使用这种方式来处理这个问题，那么这个问题应该怎么处理呢？我们就需要学习下一小节的内容。
+此时我们可以看到 if 语句已经执行了。当然我们在真实开发中可能不能使用这种方式来处理这个问题，那么这个问题应该怎么处理呢？我们就需要学习下一小节的内容。
 
 ## 3.4 问题处理
 
@@ -1309,8 +1279,6 @@ flag=true
 ....
 ```
 
-
-
 工作原理说明
 
 对上述代码加锁完毕以后，某一个线程支持该程序的过程如下：
@@ -1327,9 +1295,9 @@ e.将修改后的副本的值刷新回主内存中
 
 f.线程释放锁
 
-### 3.4.2 volatile关键字
+### 3.4.2 volatile 关键字
 
-第二种处理方案，我们可以通过volatile关键字来修饰flag变量。
+第二种处理方案，我们可以通过 volatile 关键字来修饰 flag 变量。
 
 线程类
 
@@ -1389,38 +1357,30 @@ flag=true
 ....
 ```
 
-
-
 工作原理说明
 
-![1571746088704](assets/1571746088704.png) 
+![1571746088704](assets/1571746088704.png)
 
 执行流程分析
 
-1. VolatileThread线程从主内存读取到数据放入其对应的工作内存
-2. 将flag的值更改为true，但是这个时候flag的值还没有回写主内存
-3. 此时main线程读取到了flag的值并将其放入到自己的工作内存中，此时flag的值为false
-4. VolatileThread线程将flag的值写到主内存
-5. main线程工作内存中的flag变量副本失效
-6. main线程再次使用flag时，main线程会从主内存读取最新的值，放入到工作内存中，然后在进行使用
+1. VolatileThread 线程从主内存读取到数据放入其对应的工作内存
+2. 将 flag 的值更改为 true，但是这个时候 flag 的值还没有回写主内存
+3. 此时 main 线程读取到了 flag 的值并将其放入到自己的工作内存中，此时 flag 的值为 false
+4. VolatileThread 线程将 flag 的值写到主内存
+5. main 线程工作内存中的 flag 变量副本失效
+6. main 线程再次使用 flag 时，main 线程会从主内存读取最新的值，放入到工作内存中，然后在进行使用
 
+总结： volatile 保证不同线程对共享变量操作的可见性，也就是说一个线程修改了 volatile 修饰的变量，当修改写回主内存时，另外一个线程立即看到最新的值。
 
+​ 但是 volatile 不保证原子性(关于原子性问题，我们在下面的小节中会介绍)。
 
-总结： volatile保证不同线程对共享变量操作的可见性，也就是说一个线程修改了volatile修饰的变量，当修改写回主内存时，另外一个线程立即看到最新的值。
+volatile 与 synchronized 的区别：
 
-​      但是volatile不保证原子性(关于原子性问题，我们在下面的小节中会介绍)。
+1. volatile 只能修饰实例变量和类变量，而 synchronized 可以修饰方法，以及代码块。
 
+2. volatile 保证数据的可见性，但是不保证原子性(多线程进行写操作，不保证线程安全);而 synchronized 是一种排他（互斥）的机制(因此有时我们也将 synchronized 这种锁称
 
-
-volatile与synchronized的区别：
-
-1. volatile只能修饰实例变量和类变量，而synchronized可以修饰方法，以及代码块。
-
-2. volatile保证数据的可见性，但是不保证原子性(多线程进行写操作，不保证线程安全);而synchronized是一种排他（互斥）的机制(因此有时我们也将synchronized这种锁称
-
-   之为排他（互斥）锁)，synchronized修饰的代码块，被修饰的代码块称之为同步代码块，无法被中断可以保证原子性，也可以间接的保证可见性。
-
-
+   之为排他（互斥）锁)，synchronized 修饰的代码块，被修饰的代码块称之为同步代码块，无法被中断可以保证原子性，也可以间接的保证可见性。
 
 # 4 原子性
 
@@ -1428,7 +1388,7 @@ volatile与synchronized的区别：
 
 //比如说：你喂你女朋友吃冰淇淋，如果没有女朋友，你就假想一下，实在不行，你就喂你旁边的哥们吃一口冰淇淋。这就是一个不可分割的整体，一个是你喂，一个是她吃。这就是一个整体，如果没有她吃，那么你喂就没有意义，如果没有你喂，她吃就没有意义。
 
-//比如：从张三的账户给李四的账户转1000元，这个动作将包含两个基本的操作：从张三的账户扣除1000元，给李四的账户增加1000元。这两个操作必须符合原子性的要求，要么都成功要么
+//比如：从张三的账户给李四的账户转 1000 元，这个动作将包含两个基本的操作：从张三的账户扣除 1000 元，给李四的账户增加 1000 元。这两个操作必须符合原子性的要求，要么都成功要么
 
 都失败。
 
@@ -1446,13 +1406,13 @@ public class VolatileAtomicThread implements Runnable {
 
     @Override
     public void run() {
-        
+
         // 对该变量进行++操作，100次
         for(int x = 0 ; x < 100 ; x++) {
-            count++ ;					
+            count++ ;
             System.out.println("冰淇淋的个数 =========>>>> " + count);
         }
-        
+
     }
 
 }
@@ -1472,13 +1432,13 @@ public class VolatileAtomicThreadDemo {
         for(int x = 0 ; x < 100 ; x++) {
             new Thread(volatileAtomicThread).start();
         }
-        
+
     }
 
 }
 ```
 
-程序分析：我们在主线程中通过for循环启动了100个线程，每一个线程都会对VolatileAtomicThread类中的count加100次。那么直接结果应该是10000。但是真正的执行结果和我们分析
+程序分析：我们在主线程中通过 for 循环启动了 100 个线程，每一个线程都会对 VolatileAtomicThread 类中的 count 加 100 次。那么直接结果应该是 10000。但是真正的执行结果和我们分析
 
 的是否一样呢？运行程序(多运行几次)，查看控制台输出结果
 
@@ -1489,13 +1449,13 @@ count =========>>>> 9998
 count =========>>>> 9999
 ```
 
-通过控制台的输出，我们可以看到最终count的结果可能并不是10000。接下来我们就来分析一下问题产生的原因。
+通过控制台的输出，我们可以看到最终 count 的结果可能并不是 10000。接下来我们就来分析一下问题产生的原因。
 
 ## 4.2 问题分析说明
 
-以上问题主要是发生在count++操作上：
+以上问题主要是发生在 count++操作上：
 
-count++操作包含3个步骤：
+count++操作包含 3 个步骤：
 
 - 从主内存中读取数据到工作内存
 - 对工作内存中的数据进行++操作
@@ -1503,28 +1463,28 @@ count++操作包含3个步骤：
 
 count++操作不是一个原子性操作，也就是说在某一个时刻对某一个操作的执行，有可能被其他的线程打断。
 
-![1571794778139](assets/1571794778139.png) 
+![1571794778139](assets/1571794778139.png)
 
 产生问题的执行流程分析：
 
-1. 假设此时count的值是100，线程A需要对改变量进行自增1的操作，首先它需要从主内存中读取变量count的值。由于CPU的切换关系，此时CPU的执行权被切换到了B线程。A线程就处
+1. 假设此时 count 的值是 100，线程 A 需要对改变量进行自增 1 的操作，首先它需要从主内存中读取变量 count 的值。由于 CPU 的切换关系，此时 CPU 的执行权被切换到了 B 线程。A 线程就处
 
-   于就绪状态，B线程处于运行状态。
+   于就绪状态，B 线程处于运行状态。
 
-2. 线程B也需要从主内存中读取count变量的值,由于线程A没有对count值做任何修改因此此时B读取到的数据还是100
+2. 线程 B 也需要从主内存中读取 count 变量的值,由于线程 A 没有对 count 值做任何修改因此此时 B 读取到的数据还是 100
 
-3. 线程B工作内存中对count执行了+1操作，但是未刷新之主内存中
+3. 线程 B 工作内存中对 count 执行了+1 操作，但是未刷新之主内存中
 
-4. 此时CPU的执行权切换到了A线程上，由于此时线程B没有将工作内存中的数据刷新到主内存，因此A线程工作内存中的变量值还是100，没有失效。A线程对工作内存中的数据进行了+1操作。
+4. 此时 CPU 的执行权切换到了 A 线程上，由于此时线程 B 没有将工作内存中的数据刷新到主内存，因此 A 线程工作内存中的变量值还是 100，没有失效。A 线程对工作内存中的数据进行了+1 操作。
 
-5. 线程B将101写入到主内存
-6. 线程A将101写入到主内存
+5. 线程 B 将 101 写入到主内存
+6. 线程 A 将 101 写入到主内存
 
-虽然计算了2次，但是只对A进行了1次修改。
+虽然计算了 2 次，但是只对 A 进行了 1 次修改。
 
-## 4.3 volatile原子性测试
+## 4.3 volatile 原子性测试
 
-我们刚才说到了volatile在多线程环境下只保证了共享变量在多个线程间的可见性，但是不保证原子性。那么接下来我们就来做一个测试。测试的思想，就是使用volatile修饰count。
+我们刚才说到了 volatile 在多线程环境下只保证了共享变量在多个线程间的可见性，但是不保证原子性。那么接下来我们就来做一个测试。测试的思想，就是使用 volatile 修饰 count。
 
 线程类
 
@@ -1536,13 +1496,13 @@ public class VolatileAtomicThread implements Runnable {
 
     @Override
     public void run() {
-        
+
         // 对该变量进行++操作，100次
         for(int x = 0 ; x < 100 ; x++) {
-            count++ ;					
+            count++ ;
             System.out.println("count =========>>>> " + count);
         }
-        
+
     }
 
 }
@@ -1557,19 +1517,19 @@ count =========>>>> 9998
 count =========>>>> 9999
 ```
 
-通过控制台结果的输出，我们可以看到程序还是会出现问题。因此也就证明volatile关键字是不保证原子性的。
+通过控制台结果的输出，我们可以看到程序还是会出现问题。因此也就证明 volatile 关键字是不保证原子性的。
 
-## 4.4 volatile使用场景
+## 4.4 volatile 使用场景
 
-volatile关键字不保证原子性操作，那么同学们可能会存在一些疑问，volatile关键字在什么情况下进行使用呢？这里我们举两个基本的使用场景。
+volatile 关键字不保证原子性操作，那么同学们可能会存在一些疑问，volatile 关键字在什么情况下进行使用呢？这里我们举两个基本的使用场景。
 
 ### 4.4.1 状态标志
 
-比如现在存在一个线程不断向控制台输出一段话"传智播客中国IT教育的标杆....",当这个线程执行5秒以后，将该线程结束。
+比如现在存在一个线程不断向控制台输出一段话"传智播客中国 IT 教育的标杆....",当这个线程执行 5 秒以后，将该线程结束。
 
-实现思路：定义一个boolean类型的变量，这个变量就相当于一个标志。当这个变量的值为true的时候，线程一直执行，10秒以后我们把这个变量的值更改为false，此时结束该线程的执行。
+实现思路：定义一个 boolean 类型的变量，这个变量就相当于一个标志。当这个变量的值为 true 的时候，线程一直执行，10 秒以后我们把这个变量的值更改为 false，此时结束该线程的执行。
 
-为了保证一个线程对这个变量的修改，另外一个线程立马可以看到，这个变量就需要通过volatile关键字进行修饰。
+为了保证一个线程对这个变量的修改，另外一个线程立马可以看到，这个变量就需要通过 volatile 关键字进行修饰。
 
 线程类
 
@@ -1623,38 +1583,36 @@ public class VolatileUseThreadDemo01 {
 }
 ```
 
-观察控制台输出，volatileUseThread线程执行5秒以后程序结束。
+观察控制台输出，volatileUseThread 线程执行 5 秒以后程序结束。
 
 ### 4.4.2 独立观察
 
-//AI养猪。。。。
+//AI 养猪。。。。
 
 //设备区测量温度
 
 //当温度高了。。。需要给猪开空调。。。加冰棍。。。加喝的水。。。
 
+volatile 的另一种简单使用场景是：定期"发布"观察结果供程序内部使用。例如，假设有一种环境传感器能够感觉环境温度。一个后台线程可能会每隔几秒读取一次该传感器数据，并更新包
 
-
-volatile的另一种简单使用场景是：定期"发布"观察结果供程序内部使用。例如，假设有一种环境传感器能够感觉环境温度。一个后台线程可能会每隔几秒读取一次该传感器数据，并更新包
-
-含这个volatile变量的值。然后，其他线程可以读取这个变量，从而随时能够看到最新的温度值。这种使用就是多个线程操作共享变量，但是是有一个线程对其进行写操作，其他的线程都是读。
+含这个 volatile 变量的值。然后，其他线程可以读取这个变量，从而随时能够看到最新的温度值。这种使用就是多个线程操作共享变量，但是是有一个线程对其进行写操作，其他的线程都是读。
 
 我们可以设计一个程序，模拟上面的温度传感器案例。
 
 实现步说明
 
-1. 定义一个温度传感器(TemperatureSensor)的类,在该类中定义两个成员变量(temperature(温度值)，type(传感器的类型))，temperature变量需要被volatile修饰
-2. 定义一个读取温度传感器的线程的任务类(ReadTemperatureRunnable)，该类需要定义一个TemperatureSensor类型的成员变量(该线程需要读取温度传感器的数据)
-3. 定义一个定时采集温度的线程任务类(GatherTemperatureRunnable)，该类需要定义一个TemperatureSensor类型的成员变量(该线程需要将读到的温度设置给传感器)
+1. 定义一个温度传感器(TemperatureSensor)的类,在该类中定义两个成员变量(temperature(温度值)，type(传感器的类型))，temperature 变量需要被 volatile 修饰
+2. 定义一个读取温度传感器的线程的任务类(ReadTemperatureRunnable)，该类需要定义一个 TemperatureSensor 类型的成员变量(该线程需要读取温度传感器的数据)
+3. 定义一个定时采集温度的线程任务类(GatherTemperatureRunnable)，该类需要定义一个 TemperatureSensor 类型的成员变量(该线程需要将读到的温度设置给传感器)
 
 4. 创建测试类(TemperatureSensorDemo)
-   1. 创建TemperatureSensor对象
-   2. 创建ReadTemperatureRunnable类对象，把TemperatureSensor作为构造方法的参数传递过来
-   3. 创建GatherTemperatureRunnable类对象，把TemperatureSensor作为构造方法的参数传递过来
-   4. 创建2个Thread对象，并启动，把第二步所创建的对象作为构造方法参数传递过来，这两个线程负责读取TemperatureSensor中的温度数据
-   5. 创建1个Thread对象，并启动，把第三步所创建的对象作为构造方法参数传递过来，这个线程负责读取定时采集数据中的温度数据
+   1. 创建 TemperatureSensor 对象
+   2. 创建 ReadTemperatureRunnable 类对象，把 TemperatureSensor 作为构造方法的参数传递过来
+   3. 创建 GatherTemperatureRunnable 类对象，把 TemperatureSensor 作为构造方法的参数传递过来
+   4. 创建 2 个 Thread 对象，并启动，把第二步所创建的对象作为构造方法参数传递过来，这两个线程负责读取 TemperatureSensor 中的温度数据
+   5. 创建 1 个 Thread 对象，并启动，把第三步所创建的对象作为构造方法参数传递过来，这个线程负责读取定时采集数据中的温度数据
 
-TemperatureSensor类
+TemperatureSensor 类
 
 ```java
 public class TemperatureSensor {        // 温度传感器类
@@ -1681,7 +1639,7 @@ public class TemperatureSensor {        // 温度传感器类
 }
 ```
 
-ReadTemperatureRunnable类
+ReadTemperatureRunnable 类
 
 ```java
 public class ReadTemperatureRunnable implements Runnable {
@@ -1715,7 +1673,7 @@ public class ReadTemperatureRunnable implements Runnable {
 }
 ```
 
-GatherTemperatureRunnable类
+GatherTemperatureRunnable 类
 
 ```java
 public class GatherTemperatureRunnable implements Runnable {
@@ -1807,7 +1765,7 @@ Thread-1---读取到的温度数据为------>>> 25
 
 ### 4.5.1 锁机制
 
-我们可以给count++操作添加锁，那么count++操作就是临界区中的代码，临界区中的代码一次只能被一个线程去执行，所以count++就变成了原子操作。
+我们可以给 count++操作添加锁，那么 count++操作就是临界区中的代码，临界区中的代码一次只能被一个线程去执行，所以 count++就变成了原子操作。
 
 线程任务类
 
@@ -1822,7 +1780,7 @@ public class VolatileAtomicThread implements Runnable {
 
     @Override
     public void run() {
-        
+
         // 对该变量进行++操作，100次
         for(int x = 0 ; x < 100 ; x++) {
             synchronized (obj){
@@ -1831,7 +1789,7 @@ public class VolatileAtomicThread implements Runnable {
             }
 
         }
-        
+
     }
 
 }
@@ -1849,19 +1807,19 @@ count =========>>>> 10000
 
 #### 1) AtomicInteger
 
-概述：java从JDK1.5开始提供了java.util.concurrent.atomic包(简称Atomic包)，这个包中的原子操作类提供了一种用法简单，性能高效，线程安全地更新一个变量的方式。因为变
+概述：java 从 JDK1.5 开始提供了 java.util.concurrent.atomic 包(简称 Atomic 包)，这个包中的原子操作类提供了一种用法简单，性能高效，线程安全地更新一个变量的方式。因为变
 
-量的类型有很多种，所以在Atomic包里一共提供了13个类，属于4种类型的原子更新方式，分别是原子更新基本类型、原子更新数组、原子更新引用和原子更新属性(字段)。本次我们只讲解
+量的类型有很多种，所以在 Atomic 包里一共提供了 13 个类，属于 4 种类型的原子更新方式，分别是原子更新基本类型、原子更新数组、原子更新引用和原子更新属性(字段)。本次我们只讲解
 
-使用原子的方式更新基本类型，使用原子的方式更新基本类型Atomic包提供了以下3个类：
+使用原子的方式更新基本类型，使用原子的方式更新基本类型 Atomic 包提供了以下 3 个类：
 
 AtomicBoolean： 原子更新布尔类型
 
 AtomicInteger： 原子更新整型
 
-AtomicLong：	原子更新长整型
+AtomicLong： 原子更新长整型
 
-以上3个类提供的方法几乎一模一样，所以本节仅以AtomicInteger为例进行讲解，AtomicInteger的常用方法如下：
+以上 3 个类提供的方法几乎一模一样，所以本节仅以 AtomicInteger 为例进行讲解，AtomicInteger 的常用方法如下：
 
 ```java
 public AtomicInteger()：	   				初始化一个默认值为0的原子型Integer
@@ -1874,7 +1832,7 @@ int addAndGet(int data):				 以原子方式将输入的数值与实例中的值
 int getAndSet(int value):   			 以原子方式设置为newValue的值，并返回旧值。
 ```
 
-案例演示AtomicInteger的基本使用：
+案例演示 AtomicInteger 的基本使用：
 
 ```java
 public class AtomicIntegerDemo01 {
@@ -1915,7 +1873,7 @@ public class AtomicIntegerDemo01 {
 
 #### 2) 案例改造
 
-使用AtomicInteger对案例进行改造。
+使用 AtomicInteger 对案例进行改造。
 
 ```java
 public class VolatileAtomicThread implements Runnable {
@@ -1939,103 +1897,103 @@ public class VolatileAtomicThread implements Runnable {
 
 控制台输出结果
 
-````java
+```java
 ...
 count =========>>>> 9998
 count =========>>>> 9999
 count =========>>>> 10000
-````
+```
 
-通过控制台的执行结果，我们可以看到最终得到的结果就是10000，因此也就证明AtomicInteger所提供的方法是原子性操作方法。
+通过控制台的执行结果，我们可以看到最终得到的结果就是 10000，因此也就证明 AtomicInteger 所提供的方法是原子性操作方法。
 
-## 4.6 AtomicInteger原理
+## 4.6 AtomicInteger 原理
 
 ### 4.6.1 原理介绍
 
-AtomicInteger的本质：自旋锁 + CAS算法
+AtomicInteger 的本质：自旋锁 + CAS 算法
 
-CAS的全成是： Compare And Swap(比较再交换); 是现代CPU广泛支持的一种对内存中的共享数据进行操作的一种特殊指令。CAS可以将read-modify-write转换为原子操作，这个原子操作
+CAS 的全成是： Compare And Swap(比较再交换); 是现代 CPU 广泛支持的一种对内存中的共享数据进行操作的一种特殊指令。CAS 可以将 read-modify-write 转换为原子操作，这个原子操作
 
-直接由处理器保证。CAS有3个操作数，内存值V，旧的预期值A，要修改的新值B。当且仅当旧预期值A和内存值V相同时，将内存值V修改为B并返回true，否则什么都不做，并返回false。
+直接由处理器保证。CAS 有 3 个操作数，内存值 V，旧的预期值 A，要修改的新值 B。当且仅当旧预期值 A 和内存值 V 相同时，将内存值 V 修改为 B 并返回 true，否则什么都不做，并返回 false。
 
 举例说明：
 
-1. 在内存值V当中，存储着值为10的变量。
+1. 在内存值 V 当中，存储着值为 10 的变量。
 
-![1571817059527](assets/1571817059527.png)  
+![1571817059527](assets/1571817059527.png)
 
-2. 此时线程1想要把变量的值增加1。对线程1来说，旧的预期值 A = 10 ，要修改的新值 B = 11。
+2. 此时线程 1 想要把变量的值增加 1。对线程 1 来说，旧的预期值 A = 10 ，要修改的新值 B = 11。
 
-![1571817085047](assets/1571817085047.png) 
+![1571817085047](assets/1571817085047.png)
 
-3. 在线程1要提交更新之前，另一个线程2抢先一步，把内存值V中的变量值率先更新成了11。
+3. 在线程 1 要提交更新之前，另一个线程 2 抢先一步，把内存值 V 中的变量值率先更新成了 11。
 
-![1571817628904](assets/1571817628904.png) 
+![1571817628904](assets/1571817628904.png)
 
-4. 线程1开始提交更新，首先进行A和内存值V的实际值比较（Compare），发现A不等于V的值，提交失败。
+4. 线程 1 开始提交更新，首先进行 A 和内存值 V 的实际值比较（Compare），发现 A 不等于 V 的值，提交失败。
 
-![1571818176635](assets/1571818176635.png) 
+![1571818176635](assets/1571818176635.png)
 
-5. 线程1重新获取内存值V作为当前A的值，并重新计算想要修改的新值。此时对线程1来说，A = 11，B = 12。这个重新尝试的过程被称为<font color="red" size="4">**自旋**</font>。
+5. 线程 1 重新获取内存值 V 作为当前 A 的值，并重新计算想要修改的新值。此时对线程 1 来说，A = 11，B = 12。这个重新尝试的过程被称为<font color="red" size="4">**自旋**</font>。
 
-![1571818465276](assets/1571818465276.png) 
+![1571818465276](assets/1571818465276.png)
 
-6. 这一次比较幸运，没有其他线程改变V的值。线程1进行Compare，发现A和V的值是相等的。
+6. 这一次比较幸运，没有其他线程改变 V 的值。线程 1 进行 Compare，发现 A 和 V 的值是相等的。
 
-![1571818597998](assets/1571818597998.png) 
+![1571818597998](assets/1571818597998.png)
 
-7. 线程1进行SWAP，把内存V的值替换为B，也就是12。
+7. 线程 1 进行 SWAP，把内存 V 的值替换为 B，也就是 12。
 
-![1571818747880](assets/1571818747880.png) 
+![1571818747880](assets/1571818747880.png)
 
 举例说明：这好比春节的时候抢火车票，下手快的会抢先买到票，而下手慢的可以再次尝试，直到买到票。
 
 ### 4.6.2 源码分析
 
-那么接下来我们就来查看一下AtomicInteger类中incrementAndGet方法的源码。
+那么接下来我们就来查看一下 AtomicInteger 类中 incrementAndGet 方法的源码。
 
 ```java
 public class AtomicInteger extends Number implements java.io.Serializable {
-    
+
     // cas算法的实现类
     private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
-    
+
     // 表示变量值在内存中的偏移量地址，unsafe类就是根据内存偏移量地址获取数据值。
     private static final long VALUE = U.objectFieldOffset(AtomicInteger.class, "value");
     private volatile int value;
-    
+
     // 以原子方式将当前值加1，这里返回的是自增后的值
     public final int incrementAndGet() {
-        
+
         /* this表示当前AtomicInteger对象 ，1表示要增加的值 */
         return U.getAndAddInt(this, VALUE, 1) + 1;		// 调用Unsafe类中的getAndAddInt方法
-        
+
     }
-    
+
 }
 ```
 
-UnSafe类
+UnSafe 类
 
 ```java
 public final class Unsafe {
-    
+
     // Unsafe类中的getAndAddInt方法
     public final int getAndAddInt(Object o, long offset, int delta) {
-        
+
         int v;
-        
+
         // do...while就是自旋操作,当CAS成功以后，循环结束
         do {
             // 获取AtomicInteger类中所封装的int类型的值，就相当于旧的预期值A
-            v = getIntVolatile(o, offset); 
-            
+            v = getIntVolatile(o, offset);
+
             // 调用本类的weakCompareAndSetInt方法实现比较在交换； o: AtomicInteger对象, v: 相当于旧的预期值A, v + delta：新值B
         } while (!weakCompareAndSetInt(o, offset, v, v + delta));
-        
+
         return v;
     }
-    
+
     // Unsafe类中的weakCompareAndSetInt方法
     public final boolean weakCompareAndSetInt(Object o, long offset, int expected, int x) {
         return compareAndSetInt(o, offset, expected, x);
@@ -2043,51 +2001,43 @@ public final class Unsafe {
 
     // 本地方法，调用CPU指令实现CAS
     public final native boolean compareAndSetInt(Object o, long offset, int expected, int x);
-    
+
 }
 ```
 
-## 4.7 CAS与Synchronized
+## 4.7 CAS 与 Synchronized
 
-CAS和Synchronized都可以保证多线程环境下共享数据的安全性。那么他们两者有什么区别？
+CAS 和 Synchronized 都可以保证多线程环境下共享数据的安全性。那么他们两者有什么区别？
 
-
-
-Synchronized是从悲观的角度出发：
+Synchronized 是从悲观的角度出发：
 
 总是假设最坏的情况，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会阻塞直到它拿到锁（**共享资源每次只给一个线程使用，其它线**
 
-**程阻塞，用完后再把资源转让给其它线程**）。因此Synchronized我们也将其称之为悲观锁。jdk中的ReentrantLock也是一种悲观锁。
+**程阻塞，用完后再把资源转让给其它线程**）。因此 Synchronized 我们也将其称之为悲观锁。jdk 中的 ReentrantLock 也是一种悲观锁。
 
+CAS 是从乐观的角度出发:
 
-
-CAS是从乐观的角度出发:
-
-总是假设最好的情况，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据。CAS这种机制我们也可以将其称之为乐观锁。
-
-
+总是假设最好的情况，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据。CAS 这种机制我们也可以将其称之为乐观锁。
 
 # 5 并发工具类
 
-在JDK的并发包里提供了几个非常有用的并发容器和并发工具类。供我们在多线程开发中进行使用。
+在 JDK 的并发包里提供了几个非常有用的并发容器和并发工具类。供我们在多线程开发中进行使用。
 
 ## 5.1 ConcurrentHashMap
 
 ### 5.1.1 概述以及基本使用
 
-在集合类中HashMap是比较常用的集合对象，但是HashMap是线程不安全的(多线程环境下可能会存在问题)。为了保证数据的安全性我们可以使用Hashtable，但是Hashtable的效率低下。
+在集合类中 HashMap 是比较常用的集合对象，但是 HashMap 是线程不安全的(多线程环境下可能会存在问题)。为了保证数据的安全性我们可以使用 Hashtable，但是 Hashtable 的效率低下。
 
-基于以上两个原因我们可以使用JDK1.5以后所提供的ConcurrentHashMap。
+基于以上两个原因我们可以使用 JDK1.5 以后所提供的 ConcurrentHashMap。
 
-
-
-<font color="blue" size="3">**案例1**</font>：演示HashMap线程不安全
+<font color="blue" size="3">**案例 1**</font>：演示 HashMap 线程不安全
 
 实现步骤
 
-1. 创建一个HashMap集合对象
+1. 创建一个 HashMap 集合对象
 2. 创建两个线程对象，第一个线程对象向集合中添加元素(1-24),第二个线程对象向集合中添加元素(25-50);
-3. 主线程休眠1秒，以便让其他两个线程将数据填装完毕
+3. 主线程休眠 1 秒，以便让其他两个线程将数据填装完毕
 4. 从集合中找出键和值不相同的数据
 
 测试类
@@ -2163,18 +2113,16 @@ public class HashMapDemo01 {
 
 控制台输出结果
 
-````java
+```java
 ----------------------------------------------------------
 5:null
-````
+```
 
-通过控制台的输出结果，我们可以看到在多线程操作HashMap的时候，可能会出现线程安全问题。
+通过控制台的输出结果，我们可以看到在多线程操作 HashMap 的时候，可能会出现线程安全问题。
 
-> 注1：需要多次运行才可以看到具体的效果; 可以使用循环将代码进行改造，以便让问题方便的暴露出来！
+> 注 1：需要多次运行才可以看到具体的效果; 可以使用循环将代码进行改造，以便让问题方便的暴露出来！
 
-
-
-<font color="blue" size="3">**案例2**</font>：演示Hashtable线程安全
+<font color="blue" size="3">**案例 2**</font>：演示 Hashtable 线程安全
 
 测试类
 
@@ -2240,26 +2188,24 @@ public class HashtableDemo01 {
             }
 
         }
-        
+
     }
 
 }
 ```
 
-不论该程序运行多少次，都不会产生数据问题。因此也就证明Hashtable是线程安全的。
+不论该程序运行多少次，都不会产生数据问题。因此也就证明 Hashtable 是线程安全的。
 
+<font color="blue" size="3">**Hashtable 保证线程安全的原理**</font>：
 
-
-<font color="blue" size="3">**Hashtable保证线程安全的原理**</font>：
-
-查看Hashtable的源码
+查看 Hashtable 的源码
 
 ```java
 public class Hashtable<K,V> extends Dictionary<K,V> implements Map<K,V>, Cloneable, java.io.Serializable {
-    
+
     // Entry数组，一个Entry就相当于一个元素
     private transient Entry<?,?>[] table;
-    
+
     // Entry类的定义
     private static class Entry<K,V> implements Map.Entry<K,V> {
         final int hash;		// 当前key的hash码值
@@ -2267,32 +2213,30 @@ public class Hashtable<K,V> extends Dictionary<K,V> implements Map<K,V>, Cloneab
         V value;			// 值
         Entry<K,V> next;	// 下一个节点
     }
-    
+
     // 存储数据
     public synchronized V put(K key, V value){...}
-    
+
     // 获取数据
     public synchronized V get(Object key){...}
-    
+
     // 获取长度
     public synchronized int size(){...}
-    
+
     ...
-    
+
 }
 ```
 
 对应的结构如下图所示
 
-![1571905221097](assets/1571905221097.png) 
+![1571905221097](assets/1571905221097.png)
 
-Hashtable保证线程安全性的是使用方法全局锁进行实现的。在线程竞争激烈的情况下HashTable的效率非常低下。因为当一个线程访问HashTable的同步方法，其他线程也访问HashTable
+Hashtable 保证线程安全性的是使用方法全局锁进行实现的。在线程竞争激烈的情况下 HashTable 的效率非常低下。因为当一个线程访问 HashTable 的同步方法，其他线程也访问 HashTable
 
-的同步方法时，会进入阻塞状态。如线程1使用put进行元素添加，线程2不但不能使用put方法添加元素，也不能使用get方法来获取元素，所以竞争越激烈效率越低。
+的同步方法时，会进入阻塞状态。如线程 1 使用 put 进行元素添加，线程 2 不但不能使用 put 方法添加元素，也不能使用 get 方法来获取元素，所以竞争越激烈效率越低。
 
-
-
-<font color="blue" size="3">**案例3**</font>：演示ConcurrentHashMap线程安全
+<font color="blue" size="3">**案例 3**</font>：演示 ConcurrentHashMap 线程安全
 
 测试类
 
@@ -2364,35 +2308,35 @@ public class ConcurrentHashMapDemo01 {
 }
 ```
 
-不论该程序运行多少次，都不会产生数据问题。因此也就证明ConcurrentHashMap是线程安全的。
+不论该程序运行多少次，都不会产生数据问题。因此也就证明 ConcurrentHashMap 是线程安全的。
 
 ### 5.1.2 源码分析
 
-由于ConcurrentHashMap在jdk1.7和jdk1.8的时候实现原理不太相同，因此需要分别来讲解一下两个不同版本的实现原理。
+由于 ConcurrentHashMap 在 jdk1.7 和 jdk1.8 的时候实现原理不太相同，因此需要分别来讲解一下两个不同版本的实现原理。
 
-#### 1) jdk1.7版本
+#### 1) jdk1.7 版本
 
-<font color="blue" size="3">**ConcurrentHashMap中的重要成员变量**</font>
+<font color="blue" size="3">**ConcurrentHashMap 中的重要成员变量**</font>
 
 ```java
 public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
-    
+
     /**
      * Segment翻译中文为"段" , 段数组对象
      */
     final Segment<K,V>[] segments;
-    
+
     // Segment是一种可重入锁（ReentrantLock），在ConcurrentHashMap里扮演锁的角色，将一个大的table分割成多个小的table进行加锁。
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
-        
+
         transient volatile int count;    			// Segment中元素的数量，由volatile修饰，支持内存可见性；
         transient int modCount;			 			// 对table的大小造成影响的操作的数量（比如put或者remove操作）;
         transient int threshold;		 			// 扩容阈值;
         transient volatile HashEntry<K,V>[] table;  // 链表数组，数组中的每一个元素代表了一个链表的头部;
-        final float loadFactor;			 			// 负载因子 
-        
+        final float loadFactor;			 			// 负载因子
+
     }
-    
+
     // Segment中的元素是以HashEntry的形式存放在数组中的，其结构与普通HashMap的HashEntry基本一致，不同的是Segment的HashEntry，其value由		     // volatile修饰，以支持内存可见性，即写操作对其他读线程即时可见。
     static final class HashEntry<K,V> {
         final int hash;					// 当前节点key对应的哈希码值
@@ -2400,73 +2344,71 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         volatile V value;				// 存储值
         volatile HashEntry<K,V> next;	// 下一个节点
     }
-    
+
 }
 ```
 
 对应的结构如下图所示
 
-![1571880094854](assets/1571880094854.png)  
+![1571880094854](assets/1571880094854.png)
 
-简单来讲，就是ConcurrentHashMap比HashMap多了一次hash过程，第1次hash定位到Segment，第2次hash定位到HashEntry，然后链表搜索找到指定节点。在进行写操作时，只需锁住写
+简单来讲，就是 ConcurrentHashMap 比 HashMap 多了一次 hash 过程，第 1 次 hash 定位到 Segment，第 2 次 hash 定位到 HashEntry，然后链表搜索找到指定节点。在进行写操作时，只需锁住写
 
-元素所在的Segment即可(这种锁被称为<font size="3" color="red">**分段锁**</font>)，其他Segment无需加锁，从而产生锁竞争的概率大大减小，提高了并发读写的效率。该种实现方式的缺点是hash过程比普通的HashMap要长
+元素所在的 Segment 即可(这种锁被称为<font size="3" color="red">**分段锁**</font>)，其他 Segment 无需加锁，从而产生锁竞争的概率大大减小，提高了并发读写的效率。该种实现方式的缺点是 hash 过程比普通的 HashMap 要长
 
-(因为需要进行两次hash操作)。
+(因为需要进行两次 hash 操作)。
 
-
-
-<font color="blue" size="3">**ConcurrentHashMap的put方法源码分析**</font>
+<font color="blue" size="3">**ConcurrentHashMap 的 put 方法源码分析**</font>
 
 ```java
-public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable { 
-    
+public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+
     public V put(K key, V value) {
-        
+
         // 定义一个Segment对象
         Segment<K,V> s;
-        
+
         // 如果value的值为空，那么抛出异常
         if (value == null) throw new NullPointerException();
-        
+
         // hash函数获取key的hashCode，然后做了一些处理
         int hash = hash(key);
-        
+
         // 通过key的hashCode定位segment
         int j = (hash >>> segmentShift) & segmentMask;
-        
+
         // 对定位的Segment进行判断，如果Segment为空，调用ensureSegment进行初始化操作(第一次hash定位)
-        if ((s = (Segment<K,V>)UNSAFE.getObject(segments, (j << SSHIFT) + SBASE)) == null) 
+        if ((s = (Segment<K,V>)UNSAFE.getObject(segments, (j << SSHIFT) + SBASE)) == null)
             s = ensureSegment(j);
-        
+
         // 调用Segment对象的put方法添加元素
         return s.put(key, hash, value, false);
     }
-    
+
     // Segment是一种可ReentrantLock，在ConcurrentHashMap里扮演锁的角色，将一个大的table分割成多个小的table进行加锁。
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
-        
+
         // 添加元素
         final V put(K key, int hash, V value, boolean onlyIfAbsent) {
-            
+
             // 尝试对该段进行加锁,如果加锁失败，则调用scanAndLockForPut方法;在该方法中就要进行再次尝试或者进行自旋等待
             HashEntry<K,V> node = tryLock() ? null : scanAndLockForPut(key, hash, value);
             V oldValue;
             try {
-                
+
                 // 获取HashEntry数组对象
                 HashEntry<K,V>[] tab = table;
-                
+
                 // 根据key的hashCode值计算索引(第二次hash定位)
                 int index = (tab.length - 1) & hash;
                 HashEntry<K,V> first = entryAt(tab, index);
-                for (HashEntry<K,V> e = first;;) 
-                    
+                for (HashEntry<K,V> e = first;;)
+
                     // 若不为null
                     if (e != null) {
                         K k;
-                        
-                        // 判读当前节点的key是否和链表头节点的key相同(依赖于hashCode方法和equals方法) 
+
+                        // 判读当前节点的key是否和链表头节点的key相同(依赖于hashCode方法和equals方法)
                         // 如果相同，值进行更新
                         if ((k = e.key) == key || (e.hash == hash && key.equals(k))) {
                             oldValue = e.value;
@@ -2476,17 +2418,17 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                             }
                             break;
                         }
-                        
+
                         e = e.next;
                     } else {  // 若头结点为null
-                        
+
                         // 将新节点添加到链表中
-                        if (node != null) 
+                        if (node != null)
                             node.setNext(first);
                         else
                             node = new HashEntry<K,V>(hash, key, value, first);
                         int c = count + 1;
-                        
+
                         // 如果超过阈值，则进行rehash操作
                         if (c > threshold && tab.length < MAXIMUM_CAPACITY)
                             rehash(node);
@@ -2501,46 +2443,44 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             } finally {
                 unlock();
             }
-        
+
             return oldValue;
-        } 	
-        
+        }
+
     }
-    
+
 }
 
 ```
 
 > 注：源代码进行简单讲解即可(核心：进行了两次哈希定位以及加锁过程)
 
+#### 2) jdk1.8 版本
 
+在 JDK1.8 中为了进一步优化 ConcurrentHashMap 的性能，去掉了 Segment 分段锁的设计。在数据结构方面，则是跟 HashMap 一样，使用一个哈希表 table 数组。(数组 + 链表 + 红黑树)
 
-#### 2) jdk1.8版本
-
-在JDK1.8中为了进一步优化ConcurrentHashMap的性能，去掉了Segment分段锁的设计。在数据结构方面，则是跟HashMap一样，使用一个哈希表table数组。(数组 + 链表 + 红黑树) 
-
-而线程安全方面是结合CAS机制 + 局部锁实现的，减低锁的粒度，提高性能。同时在HashMap的基础上，对哈希表table数组和链表节点的value，next指针等使用volatile来修饰，从而
+而线程安全方面是结合 CAS 机制 + 局部锁实现的，减低锁的粒度，提高性能。同时在 HashMap 的基础上，对哈希表 table 数组和链表节点的 value，next 指针等使用 volatile 来修饰，从而
 
 实现线程可见性。
 
-<font color="blue" size="3">**ConcurrentHashMap中的重要成员变量**</font>
+<font color="blue" size="3">**ConcurrentHashMap 中的重要成员变量**</font>
 
 ```java
 public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements ConcurrentMap<K,V>, Serializable {
-    
+
     // Node数组
     transient volatile Node<K,V>[] table;
-    
+
     // Node类的定义
-    static class Node<K,V> implements Map.Entry<K,V> { 
-        
+    static class Node<K,V> implements Map.Entry<K,V> {
+
         final int hash;				// 当前key的hashCode值
         final K key;				// 键
         volatile V val;				// 值
         volatile Node<K,V> next;	// 下一个节点
-        
+
     }
-    
+
     // TreeNode类的定义
     static final class TreeNode<K,V> extends Node<K,V> {
         TreeNode<K,V> parent;  // 父节点
@@ -2549,53 +2489,51 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
         TreeNode<K,V> prev;    // needed to unlink next upon deletion
         boolean red;		   // 节点的颜色状态
     }
-    
+
 }
 ```
 
 对应的结构如下图
 
-![1571901607504](assets/1571901607504.png) 
+![1571901607504](assets/1571901607504.png)
 
-
-
-<font color="blue" size="3">**ConcurrentHashMap的put方法源码分析**</font>
+<font color="blue" size="3">**ConcurrentHashMap 的 put 方法源码分析**</font>
 
 ```java
 public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements ConcurrentMap<K,V>, Serializable {
-    
+
     // 添加元素
     public V put(K key, V value) {
     	return putVal(key, value, false);
 	}
-    
+
     // putVal方法定义
     final V putVal(K key, V value, boolean onlyIfAbsent) {
-        
+
         // key为null直接抛出异常
         if (key == null || value == null) throw new NullPointerException();
-        
+
         // 计算key所对应的hashCode值
         int hash = spread(key.hashCode());
         int binCount = 0;
         for (Node<K,V>[] tab = table;;) {
             Node<K,V> f; int n, i, fh;
-            
+
             // 哈希表如果不存在，那么此时初始化哈希表
             if (tab == null || (n = tab.length) == 0)
                 tab = initTable();
-            
+
             // 通过hash值计算key在table表中的索引，将其值赋值给变量i,然后根据索引找到对应的Node，如果Node为null,做出处理
             else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
-                
+
                 // 新增链表头结点，cas方式添加到哈希表table
-                if (casTabAt(tab, i, null, new Node<K,V>(hash, key, value, null))) break;                   
+                if (casTabAt(tab, i, null, new Node<K,V>(hash, key, value, null))) break;
             }
             else if ((fh = f.hash) == MOVED)
                 tab = helpTransfer(tab, f);
             else {
                 V oldVal = null;
-                
+
                 // f为链表头结点，使用synchronized加锁
                 synchronized (f) {
                     if (tabAt(tab, i) == f) {
@@ -2603,7 +2541,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
                             binCount = 1;
                             for (Node<K,V> e = f;; ++binCount) {
                                 K ek;
-                                
+
                                 // 节点已经存在，更新value即可
                                 if (e.hash == hash && ((ek = e.key) == key || (ek != null && key.equals(ek)))) {
                                     oldVal = e.val;
@@ -2611,16 +2549,16 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
                                         e.val = value;
                                     break;
                                 }
-                                
+
                                 // 该key对应的节点不存在,则新增节点并添加到该链表的末尾
                                 Node<K,V> pred = e;
                                 if ((e = e.next) == null) {
                                     pred.next = new Node<K,V>(hash, key, value, null);
                                     break;
                                 }
-                                
+
                             }
-                            
+
                         } else if (f instanceof TreeBin) { // 红黑树节点，则往该红黑树更新或添加该节点即可
                             Node<K,V> p;
                             binCount = 2;
@@ -2632,7 +2570,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
                         }
                     }
                 }
-                
+
                 // 判断是否需要将链表转为红黑树
                 if (binCount != 0) {
                     if (binCount >= TREEIFY_THRESHOLD)
@@ -2646,7 +2584,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
         addCount(1L, binCount);
         return null;
     }
-    
+
     // CAS算法的核心类
     private static final sun.misc.Unsafe U;
     static {
@@ -2657,43 +2595,41 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
             throw new Error(e);
         }
     }
-    
+
     // 原子获取链表节点
     static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
         return (Node<K,V>)U.getObjectVolatile(tab, ((long)i << ASHIFT) + ABASE);
     }
-    
+
     // CAS更新或新增链表节点
     static final <K,V> boolean casTabAt(Node<K,V>[] tab, int i, Node<K,V> c, Node<K,V> v) {
         return U.compareAndSwapObject(tab, ((long)i << ASHIFT) + ABASE, c, v);
     }
-    
+
 }
 ```
 
-
-
 简单总结：
 
-1. 如果当前需要put的key对应的链表在哈希表table中还不存在，即还没添加过该key的hash值对应的链表，则调用casTabAt方法，基于CAS机制来实现添加该链表头结点到哈希表
+1. 如果当前需要 put 的 key 对应的链表在哈希表 table 中还不存在，即还没添加过该 key 的 hash 值对应的链表，则调用 casTabAt 方法，基于 CAS 机制来实现添加该链表头结点到哈希表
 
-   table中，避免该线程在添加该链表头结的时候，其他线程也在添加的并发问题；如果CAS失败，则进行自旋，通过继续第2步的操作；
+   table 中，避免该线程在添加该链表头结的时候，其他线程也在添加的并发问题；如果 CAS 失败，则进行自旋，通过继续第 2 步的操作；
 
-2. 如果需要添加的链表已经存在哈希表table中，则通过tabAt方法，基于volatile机制，获取当前最新的链表头结点f，由于f指向的是ConcurrentHashMap的哈希表table的某条
+2. 如果需要添加的链表已经存在哈希表 table 中，则通过 tabAt 方法，基于 volatile 机制，获取当前最新的链表头结点 f，由于 f 指向的是 ConcurrentHashMap 的哈希表 table 的某条
 
-   链表的头结点，故虽然f是临时变量，由于是引用共享的该链表头结点，所以可以使用synchronized关键字来同步多个线程对该链表的访问。在synchronized(f)同步块里面则是与
+   链表的头结点，故虽然 f 是临时变量，由于是引用共享的该链表头结点，所以可以使用 synchronized 关键字来同步多个线程对该链表的访问。在 synchronized(f)同步块里面则是与
 
-   HashMap一样遍历该链表，如果该key对应的链表节点已经存在，则更新，否则在链表的末尾新增该key对应的链表节点。
+   HashMap 一样遍历该链表，如果该 key 对应的链表节点已经存在，则更新，否则在链表的末尾新增该 key 对应的链表节点。
 
 ## 5.2 CountDownLatch
 
-CountDownLatch允许一个或多个线程等待其他线程完成操作以后，再执行当前线程；比如我们在主线程需要开启2个其他线程，当其他的线程执行完毕以后我们再去执行主线程，针对这
+CountDownLatch 允许一个或多个线程等待其他线程完成操作以后，再执行当前线程；比如我们在主线程需要开启 2 个其他线程，当其他的线程执行完毕以后我们再去执行主线程，针对这
 
-个需求我们就可以使用CountDownLatch来进行实现。CountDownLatch中count down是倒着数数的意思；CountDownLatch是通过一个计数器来实现的，每当一个线程完成了自己的
+个需求我们就可以使用 CountDownLatch 来进行实现。CountDownLatch 中 count down 是倒着数数的意思；CountDownLatch 是通过一个计数器来实现的，每当一个线程完成了自己的
 
-任务后，可以调用countDown()方法让计数器-1，当计数器到达0时，调用CountDownLatch的await()方法的线程阻塞状态解除，继续执行。
+任务后，可以调用 countDown()方法让计数器-1，当计数器到达 0 时，调用 CountDownLatch 的 await()方法的线程阻塞状态解除，继续执行。
 
-CountDownLatch的相关方法
+CountDownLatch 的相关方法
 
 ```java
 public CountDownLatch(int count)						// 初始化一个指定计数器的CountDownLatch对象
@@ -2701,13 +2637,11 @@ public void await() throws InterruptedException			// 让当前线程等待
 public void countDown()									// 计数器进行减1
 ```
 
+案例演示：使用 CountDownLatch 完成上述需求(我们在主线程需要开启 2 个其他线程，当其他的线程执行完毕以后我们再去执行主线程)
 
+实现思路：在 main 方法中创建一个 CountDownLatch 对象，把这个对象作为作为参数传递给其他的两个任务线程
 
-案例演示：使用CountDownLatch完成上述需求(我们在主线程需要开启2个其他线程，当其他的线程执行完毕以后我们再去执行主线程)
-
-实现思路：在main方法中创建一个CountDownLatch对象，把这个对象作为作为参数传递给其他的两个任务线程
-
-线程任务类1
+线程任务类 1
 
 ```java
 public class CountDownLatchThread01 implements Runnable {
@@ -2736,7 +2670,7 @@ public class CountDownLatchThread01 implements Runnable {
 }
 ```
 
-线程任务类2
+线程任务类 2
 
 ```java
 public class CountDownLatchThread02 implements Runnable {
@@ -2809,39 +2743,35 @@ public class CountDownLatchDemo01 {
 主线程执行了.... 程序结束了......
 ```
 
-CountDownLatchThread02线程先执行完毕，此时计数器-1；CountDownLatchThread01线程执行完毕，此时计数器-1；当计数器的值为0的时候，主线程阻塞状态接触，主线程向下执行。
+CountDownLatchThread02 线程先执行完毕，此时计数器-1；CountDownLatchThread01 线程执行完毕，此时计数器-1；当计数器的值为 0 的时候，主线程阻塞状态接触，主线程向下执行。
 
 ## 5.3 CyclicBarrier
 
 ### 5.3.1 概述以及基本使用
 
-CyclicBarrier的字面意思是可循环使用（Cyclic）的屏障（Barrier）。它要做的事情是，让一组线程到达一个屏障（也可以叫同步点）时被阻塞，直到最后一个线程到达屏障时，屏障
+CyclicBarrier 的字面意思是可循环使用（Cyclic）的屏障（Barrier）。它要做的事情是，让一组线程到达一个屏障（也可以叫同步点）时被阻塞，直到最后一个线程到达屏障时，屏障
 
 才会开门，所有被屏障拦截的线程才会继续运行。
 
-例如：公司召集5名员工开会，等5名员工都到了，会议开始。我们创建5个员工线程，1个开会线程，几乎同时启动，使用CyclicBarrier保证5名员工线程全部执行后，再执行开会线程。
+例如：公司召集 5 名员工开会，等 5 名员工都到了，会议开始。我们创建 5 个员工线程，1 个开会线程，几乎同时启动，使用 CyclicBarrier 保证 5 名员工线程全部执行后，再执行开会线程。
 
-
-
-CyclicBarrier的相关方法
+CyclicBarrier 的相关方法
 
 ```java
 public CyclicBarrier(int parties, Runnable barrierAction)   // 用于在线程到达屏障时，优先执行barrierAction，方便处理更复杂的业务场景
 public int await()											// 每个线程调用await方法告诉CyclicBarrier我已经到达了屏障，然后当前线程被阻塞
 ```
 
-
-
 案例演示：模拟员工开会
 
 实现步骤：
 
-1. 创建一个员工线程类(EmployeeThread),该线程类中需要定义一个CyclicBarrier类型的形式参数
+1. 创建一个员工线程类(EmployeeThread),该线程类中需要定义一个 CyclicBarrier 类型的形式参数
 2. 创建一个开会线程类(MettingThread)
 3. 测试类
-   1. 创建CyclicBarrier对象
-   2. 创建5个EmployeeThread线程对象，把第一步创建的CyclicBarrier对象作为构造方法参数传递过来
-   3. 启动5个员工线程
+   1. 创建 CyclicBarrier 对象
+   2. 创建 5 个 EmployeeThread 线程对象，把第一步创建的 CyclicBarrier 对象作为构造方法参数传递过来
+   3. 启动 5 个员工线程
 
 员工线程类
 
@@ -2916,29 +2846,25 @@ public class CyclicBarrierDemo01 {
 
 ### 5.3.2 使用场景
 
-使用场景：CyclicBarrier可以用于多线程计算数据，最后合并计算结果的场景。
+使用场景：CyclicBarrier 可以用于多线程计算数据，最后合并计算结果的场景。
 
-比如：现在存在两个文件，这个两个文件中存储的是某一个员工两年的工资信息(一年一个文件)，现需要对这两个文件中的数据进行汇总；使用两个线程读取2个文件中的数据，当两个文
+比如：现在存在两个文件，这个两个文件中存储的是某一个员工两年的工资信息(一年一个文件)，现需要对这两个文件中的数据进行汇总；使用两个线程读取 2 个文件中的数据，当两个文
 
 件中的数据都读取完毕以后，进行数据的汇总操作。
 
+分析：要想在两个线程读取数据完毕以后进行数据的汇总，那么我们就需要定义一个任务类(该类需要实现 Runnable 接口)；两个线程读取完数据以后再进行数据的汇总，那么我们可以将
 
+​ 两个线程读取到的数据先存储到一个集合中，而多线程环境下最常见的线程集合类就是 ConcurrentHashMap，而这个集合需要被两个线程都可以进行使用，那么我们可以将这个集
 
-分析：要想在两个线程读取数据完毕以后进行数据的汇总，那么我们就需要定义一个任务类(该类需要实现Runnable接口)；两个线程读取完数据以后再进行数据的汇总，那么我们可以将
+​ 合作为我们任务类的成员变量，然后我们在这个任务类中去定义一个 CyclicBarrier 对象，然后在定义一个方法(count)，当调用这个 count 方法的时候需要去开启两个线程对象，
 
-​	 两个线程读取到的数据先存储到一个集合中，而多线程环境下最常见的线程集合类就是ConcurrentHashMap，而这个集合需要被两个线程都可以进行使用，那么我们可以将这个集
+​ 使用这两个线程对象读取数据，把读取到的数据存储到 ConcurrentHashMap 对象，当一个线程读取数据完毕以后，调用 CyclicBarrier 的 awit 方法(告诉 CyclicBarrier 我已经
 
-​	 合作为我们任务类的成员变量，然后我们在这个任务类中去定义一个CyclicBarrier对象，然后在定义一个方法(count)，当调用这个count方法的时候需要去开启两个线程对象，
-
-​	 使用这两个线程对象读取数据，把读取到的数据存储到ConcurrentHashMap对象，当一个线程读取数据完毕以后，调用CyclicBarrier的awit方法(告诉CyclicBarrier我已经
-
-​	 到达了屏障)，然后在任务类的run方法对ConcurrentHashMap的数据进行汇总操作；
-
-
+​ 到达了屏障)，然后在任务类的 run 方法对 ConcurrentHashMap 的数据进行汇总操作；
 
 实现步骤:
 
-1. 定义一个任务类CyclicBarrierThreadUse(实现了Runnable接口)
+1. 定义一个任务类 CyclicBarrierThreadUse(实现了 Runnable 接口)
 2. 定义成员变量：CyclicBarrier ，ConcurrentHashMap
 
 ```java
@@ -2946,12 +2872,10 @@ private CyclicBarrier cyclicBarrier = new CyclicBarrier(2 , this) ;
 private ConcurrentHashMap<Integer , String> concurrentHashMap = new ConcurrentHashMap<Integer , String>() ;
 ```
 
-3. 定义一个方法count方法，在count方法中开启两个线程对象(可以使用匿名内部类的方式实现)
-4. 在run方法中对ConcurrentHashMap中的数据进行汇总
-5. 编写测试类CyclicBarrierThreadUseDemo
-6. 创建CyclicBarrierThreadUse对象，调用count方法
-
-
+3. 定义一个方法 count 方法，在 count 方法中开启两个线程对象(可以使用匿名内部类的方式实现)
+4. 在 run 方法中对 ConcurrentHashMap 中的数据进行汇总
+5. 编写测试类 CyclicBarrierThreadUseDemo
+6. 创建 CyclicBarrierThreadUse 对象，调用 count 方法
 
 任务类代代码：
 
@@ -3087,10 +3011,10 @@ public class CyclicBarrierThreadUse implements Runnable {
 public class CyclicBarrierThreadUseDemo01 {
 
     public static void main(String[] args) {
-		
+
         // 创建任务类的对象
         CyclicBarrierThreadUse cyclicBarrierThreadUse = new CyclicBarrierThreadUse();
-        
+
         // 调用count方法进行数据汇总
         cyclicBarrierThreadUse.count();
 
@@ -3101,13 +3025,13 @@ public class CyclicBarrierThreadUseDemo01 {
 
 ## 5.4 Semaphore
 
-Semaphore字面意思是信号量的意思，它的作用是控制访问特定资源的线程数目。
+Semaphore 字面意思是信号量的意思，它的作用是控制访问特定资源的线程数目。
 
 举例：现在有一个十字路口，有多辆汽车需要进经过这个十字路口，但是我们规定同时只能有两辆汽车经过。其他汽车处于等待状态，只要某一个汽车经过了这个十字路口，其他的汽车才可以经
 
-过，但是同时只能有两个汽车经过。如何限定经过这个十字路口车辆数目呢? 我们就可以使用Semaphore。
+过，但是同时只能有两个汽车经过。如何限定经过这个十字路口车辆数目呢? 我们就可以使用 Semaphore。
 
-Semaphore的常用方法
+Semaphore 的常用方法
 
 ```java
 public Semaphore(int permits)						permits 表示许可线程的数量
@@ -3115,18 +3039,16 @@ public void acquire() throws InterruptedException	表示获取许可
 public void release()								表示释放许可
 ```
 
-
-
 案例演示：模拟汽车通过十字路口
 
 实现步骤：
 
-1. 创建一个汽车的线程任务类(CarThreadRunnable),在该类中定义一个Semaphore类型的成员变量
+1. 创建一个汽车的线程任务类(CarThreadRunnable),在该类中定义一个 Semaphore 类型的成员变量
 2. 创建测试类
    1. 创建线程任务类对象
-   2. 创建5个线程对象，并启动。(5个线程对象，相当于5辆汽车)
+   2. 创建 5 个线程对象，并启动。(5 个线程对象，相当于 5 辆汽车)
 
-CarThreadRunnable类
+CarThreadRunnable 类
 
 ```java
 public class CarThreadRunnable implements Runnable {
@@ -3203,36 +3125,34 @@ Thread-3----->>驶出十字路口
 
 ### 5.5.1 概述以及基本使用
 
-Exchanger（交换者）是一个用于线程间协作的工具类。Exchanger用于进行线程间的数据交换。
+Exchanger（交换者）是一个用于线程间协作的工具类。Exchanger 用于进行线程间的数据交换。
 
 举例：比如男女双方结婚的时候，需要进行交换结婚戒指。
 
-Exchanger常用方法
+Exchanger 常用方法
 
 ```java
 public Exchanger()							// 构造方法
 public V exchange(V x)						// 进行交换数据的方法，参数x表示本方数据 ，返回值v表示对方数据
 ```
 
-这两个线程通过exchange方法交换数据，如果第一个线程先执行exchange()方法，它会一直等待第二个线程也执行exchange方法，当两个线程都到达同步点时，这两个线程就可以交换数据，
+这两个线程通过 exchange 方法交换数据，如果第一个线程先执行 exchange()方法，它会一直等待第二个线程也执行 exchange 方法，当两个线程都到达同步点时，这两个线程就可以交换数据，
 
 将本线程生产出来的数据传递给对方。
-
-
 
 案例演示：模拟交互结婚戒指
 
 实现步骤：
 
-1. 创建一个男方的线程类(ManThread),定义一个Exchanger类型的成员变量
-2. 创建一个女方的线程类(WomanThread),定义一个Exchanger类型的成员变量
+1. 创建一个男方的线程类(ManThread),定义一个 Exchanger 类型的成员变量
+2. 创建一个女方的线程类(WomanThread),定义一个 Exchanger 类型的成员变量
 3. 测试类
-   1. 创建一个Exchanger对象
-   2. 创建一个ManThread对象，把第一步所创建的Exchanger作为构造方法参数传递过来
-   3. 创建一个WomanThread对象，把第一步所创建的Exchanger作为构造方法参数传递过来
+   1. 创建一个 Exchanger 对象
+   2. 创建一个 ManThread 对象，把第一步所创建的 Exchanger 作为构造方法参数传递过来
+   3. 创建一个 WomanThread 对象，把第一步所创建的 Exchanger 作为构造方法参数传递过来
    4. 启动两个线程
 
-ManThread类
+ManThread 类
 
 ```java
 public class ManThread extends Thread {
@@ -3262,7 +3182,7 @@ public class ManThread extends Thread {
 }
 ```
 
-WomanThread类
+WomanThread 类
 
 ```java
 public class WomanThread extends Thread {
@@ -3320,7 +3240,7 @@ public class ExchangerDemo01 {
 
 使用场景：可以做数据校对工作
 
-比如: 现在存在一个文件，该文件中存储的是某一个员工一年的工资信息，现需要将这个员工的工资信息录入到系统中，采用AB岗两人进行录入，录入到两个文件中，系统需要加载这两
+比如: 现在存在一个文件，该文件中存储的是某一个员工一年的工资信息，现需要将这个员工的工资信息录入到系统中，采用 AB 岗两人进行录入，录入到两个文件中，系统需要加载这两
 
 个文件，并对两个文件数据进行校对，看看是否录入一致，
 
@@ -3332,7 +3252,7 @@ public class ExchangerDemo01 {
 4. 当每一个线程读取完数据以后，就将数据交换给对方
 5. 然后每个线程使用对方传递过来的数据与自己所录入的数据进行比对
 
-ExchangerUseDemo类
+ExchangerUseDemo 类
 
 ```java
 public class ExchangerUseDemo {
@@ -3452,22 +3372,3 @@ public class ExchangerUseDemo {
 
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
