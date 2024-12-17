@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-08-25 15:31:44
- * @LastEditTime: 2024-12-17 13:33:19
+ * @LastEditTime: 2024-12-17 14:48:35
  * @FilePath: \zero-simple-docs\pages\helper\nav.ts
  * @Description:
  */
@@ -54,6 +54,15 @@ export const nav = (): DefaultTheme.NavItem[] => {
             },
           ],
         },
+        {
+          text: "Android基础",
+          items: [
+            {
+              link: "/Android/android",
+              text: "Android基础入门",
+            },
+          ],
+        }
       ],
     },
     {
