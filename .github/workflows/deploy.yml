@@ -26,7 +26,7 @@ concurrency:
 jobs:
   # 构建工作
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }} # 从后续的输出中获取部署后的页面URL
     needs: build # 在build后面完成
-    runs-on: ubuntu-24.04 # 运行在最新版本的ubuntu系统上
+    runs-on: ubuntu-latest # 运行在最新版本的ubuntu系统上
     name: Deploy
     steps:
       - name: Deploy to GitHub Pages
