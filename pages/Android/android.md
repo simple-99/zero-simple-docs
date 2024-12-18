@@ -2,7 +2,7 @@
  * @version: 1.0
  * @Author: wsh
  * @Date: 2024-12-17 14:49:05
- * @LastEditTime: 2024-12-17 15:04:33
+ * @LastEditTime: 2024-12-18 18:07:04
  * @FilePath: \zero-simple-docs\pages\Android\android.md
  * @Description:
 -->
@@ -11,4 +11,6 @@
 
 <hr></hr>
 
-<iframe src="../Android/安卓资料/笔记-Android 开发从入门到实战.pdf" width="100%" height="1000"> </iframe>
+## Android 开发从入门到实战
+
+<iframe src="/Android/安卓资料/笔记-Android 开发从入门到实战.pdf" width="100%" height="2000"> </iframe>
